@@ -22,7 +22,7 @@ export default function Hero() {
                     className="relative w-full h-full"
                 >
                     <img
-                        src="/wed6.jpg"
+                        src="/hero1.jpg"
                         alt="Hero"
                         className="h-full w-full object-cover"
                     />
@@ -35,7 +35,7 @@ export default function Hero() {
                     className="absolute inset-0 flex flex-col items-center justify-center text-white text-center"
                 >
                     <h1 className="text-6xl md:text-[120px] font-serif italic">Namaste Frames</h1>
-                    <p className="uppercase tracking-[0.4em] text-sm mt-4">Fine Art Photography</p>
+                    <p className="uppercase tracking-[0.4em] text-sm mt-4">Scroll down to see more</p>
                 </motion.div>
             </div>
         </section>
