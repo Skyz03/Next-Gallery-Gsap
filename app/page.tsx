@@ -1,48 +1,36 @@
-import Image from "next/image";
 import Hero from "./components/Hero";
 import ProjectCard from "./components/ProjectCard";
 
 export default function Home() {
   return (
+    <main className="relative bg-[#faf9f6]">
+      {/* 1. Hero Section (200vh total height for scroll room) */}
+      <Hero />
 
-    <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 items-center">
-      <div className="lg:col-span-4">
-        <ProjectCard image="wed1.jpg" title="The Villa" location="Como" aspect="portrait" />
-      </div>
+      {/* 2. Transition Space / Only Images Section */}
+      <section className="relative z-20 -mt-[30vh] pb-24mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12">
 
-      <div className="lg:col-span-4">
-        <ProjectCard image="/wed2.jpg" title="Ethereal Grace" location="Tuscany" aspect="portrait" />
-      </div>
-      <div className="lg:col-span-4">
-        <ProjectCard image="/wed3.jpg" title="Moments De Luxe" location="Catelo" aspect="portrait" />
-      </div>
-      <div className="lg:col-span-4">
-        <ProjectCard image="/wed4.jpg" title="Graceful Moments" location="Boracay" aspect="portrait" />
-      </div>
-      <div className="lg:col-span-4">
-        <ProjectCard image="/wed5.jpg" title="Tuscany" location="Fanteko" aspect="portrait" />
-      </div>
-      <div className="lg:col-span-4">
-        <ProjectCard image="/wed6.jpg" title="Mystical Moments" location="Valino" aspect="portrait" />
-      </div>
-      <div className="lg:col-span-4">
-        <ProjectCard image="/wed7.jpg" title="Scorching Moments" location="Botesaka" aspect="portrait" />
-      </div>
-      <div className="lg:col-span-4">
-        <ProjectCard image="/wed8.jpg" title="Find Your Perfect Moment" location="Boadesa" aspect="portrait" />
-      </div>
-      <div className="lg:col-span-4">
-        <ProjectCard image="/wed3.jpg" title="Gathering De Luxe" location="Dumess" aspect="portrait" />
-      </div>
-      <div className="lg:col-span-4">
-        <ProjectCard image="/wed10.jpg" title="Dane De Cate" location="Rackeo" aspect="portrait" />
-      </div>
-      <div className="lg:col-span-4">
-        <ProjectCard image="/wed11.jpg" title="Ethereal Di Fout" location="Barbero" aspect="portrait" />
-      </div>
-      <div className="lg:col-span-4">
-        <ProjectCard image="/wed12.jpg" title="Mixining Moments" location="Pluta" aspect="portrait" />
-      </div>
-    </section>
+          {/* Column 1 */}
+          <div className="lg:col-span-4 flex flex-col gap-12">
+            <ProjectCard index={0} image="/wed1.jpg" title="Villa Balbiano" location="Lake Como" aspect="portrait" />
+            <ProjectCard index={1} image="/wed2.jpg" title="The Estate" location="Tuscany" aspect="portrait" />
+          </div>
+
+          {/* Column 2 - Offset for that staggered luxury look */}
+          <div className="lg:col-span-4 lg:mt-64 flex flex-col gap-12">
+            <ProjectCard index={2} image="/wed3.jpg" title="Chateau Luxe" location="France" aspect="portrait" />
+            <ProjectCard index={3} image="/wed4.jpg" title="Oceanic" location="Amalfi" aspect="portrait" />
+          </div>
+
+          {/* Column 3 - Offset differently */}
+          <div className="lg:col-span-4 lg:mt-32 flex flex-col gap-12">
+            <ProjectCard index={4} image="/wed5.jpg" title="Ancient Walls" location="Rome" aspect="portrait" />
+            <ProjectCard index={5} image="/wed6.jpg" title="Modern Muse" location="Milan" aspect="portrait" />
+          </div>
+
+        </div>
+      </section>
+    </main>
   );
 }

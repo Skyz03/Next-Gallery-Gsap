@@ -1,37 +1,42 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 export default function Hero() {
+    const targetRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: targetRef,
+        offset: ["start start", "end end"],
+    });
+
+    // Scale the image down from 1 (full screen) to 0.7 (framed)
+    const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8]);
+    // Fade out the text as we scroll
+    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
     return (
-        <section className="relative h-screen w-full overflow-hidden bg-[#faf9f6]">
-            {/* Background Image/Video */}
-            <div className="absolute inset-0 z-0">
-                <img
-                    src="/hero-wedding.jpg"
-                    alt="Bottega Style"
-                    className="h-full w-full object-cover"
-                />
-            </div>
-
-            {/* Elegant Overlay */}
-            <div className="relative z-10 flex h-full flex-col items-center justify-center text-white px-6">
-                <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1.2, ease: "easeOut" }}
-                    className="text-6xl md:text-8xl font-serif italic"
+        <section ref={targetRef} className="relative h-[200vh] bg-[#faf9f6]">
+            <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
+                <motion.div
+                    style={{ scale }}
+                    className="relative w-full h-full"
                 >
-                    Bottega 53
-                </motion.h1>
+                    <img
+                        src="/wed6.jpg"
+                        alt="Hero"
+                        className="h-full w-full object-cover"
+                    />
+                    {/* Subtle dark overlay */}
+                    <div className="absolute inset-0 bg-black/20" />
+                </motion.div>
 
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5, duration: 1 }}
-                    className="mt-4 text-sm uppercase tracking-[0.3em]"
+                <motion.div
+                    style={{ opacity }}
+                    className="absolute inset-0 flex flex-col items-center justify-center text-white text-center"
                 >
-                    International Wedding Photographers
-                </motion.p>
+                    <h1 className="text-6xl md:text-[120px] font-serif italic">Namaste Frames</h1>
+                    <p className="uppercase tracking-[0.4em] text-sm mt-4">Fine Art Photography</p>
+                </motion.div>
             </div>
         </section>
     );
