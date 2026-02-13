@@ -5,24 +5,32 @@ import SlideMenus from "./SlideMenus";
 export default function Navigation() {
     const [openView, setOpenView] = useState<"none" | "menu" | "contact">("none");
 
+    // We define a shared class to ensure they are identical
+    const uiTextStyle = "uppercase tracking-[0.5em] text-[10px] font-bold transition-all cursor-pointer";
+
     return (
         <>
             <div className="fixed z-[100] inset-0 pointer-events-none p-10 mix-blend-difference text-white">
-                {/* TOP LEFT: BRANDING */}
+
+                {/* TOP LEFT: BRANDING - Styled like the buttons, but scaled for impact */}
                 <div className="absolute top-10 left-10 pointer-events-auto">
-                    <h1 className="text-3xl md:text-5xl font-sans font-light tracking-wider leading-none uppercase">
-                        Namaste<br /> Flux
-                    </h1>
+                    <button
+                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                        className="uppercase tracking-[0.5em] text-[13px] md:text-[15px] font-bold leading-[1.8] hover:opacity-50 text-left transition-all cursor-pointer"
+                    >
+                        Namaste<br />
+                        Flux
+                    </button>
                 </div>
 
-                {/* TOP RIGHT: INDEX TRIGGER */}
-                <div className="absolute top-10 right-10 pointer-events-auto">
+                {/* TOP RIGHT: MENU TRIGGER */}
+                <div className="absolute top-10 right-10 pointer-events-auto text-right">
                     <button
                         onClick={() => setOpenView("menu")}
-                        className="group flex flex-col items-end gap-1 uppercase tracking-[0.4em] text-xs font-bold hover:cursor-pointer"
+                        className={`group flex flex-col items-end gap-1 ${uiTextStyle}`}
                     >
                         <span className="mb-1">Menu</span>
-                        <div className="w-12 h-[2px] bg-white group-hover:w-6 transition-all" />
+                        <div className="w-12 h-[1px] bg-white group-hover:w-6 transition-all duration-700 ease-in-out" />
                     </button>
                 </div>
 
@@ -30,14 +38,13 @@ export default function Navigation() {
                 <div className="absolute bottom-10 right-10 pointer-events-auto">
                     <button
                         onClick={() => setOpenView("contact")}
-                        className="uppercase tracking-[0.4em] text-xs font-bold hover:line-through transition-all hover:cursor-pointer"
+                        className={`${uiTextStyle} hover:line-through`}
                     >
                         Contact
                     </button>
                 </div>
             </div>
 
-            {/* THE SLIDES */}
             <SlideMenus
                 isMenuOpen={openView === "menu"}
                 isContactOpen={openView === "contact"}
