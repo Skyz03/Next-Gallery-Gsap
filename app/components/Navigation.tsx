@@ -19,9 +19,9 @@ export default function Navigation() {
                         className="uppercase tracking-[0.5em] text-[13px] md:text-[15px] font-bold leading-[1.8] hover:opacity-50 text-left transition-all cursor-pointer"
                     >
                         Namaste<br />
-                        Flux
+                        Gallery
                     </button>
-                </div>
+                </div>  
 
                 {/* TOP RIGHT: MENU TRIGGER */}
                 <div className="absolute top-10 right-10 pointer-events-auto text-right">
