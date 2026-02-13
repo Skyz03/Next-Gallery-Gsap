@@ -34,7 +34,7 @@ export default function Hero() {
                     style={{ opacity }}
                     className="absolute inset-0 flex flex-col items-center justify-center text-white text-center"
                 >
-                    <h1 className="text-6xl md:text-[120px] font-serif italic">Namaste Flux</h1>
+                    {/* <h1 className="text-6xl md:text-[120px] font-sans italic">Welcome</h1> */}
                     <p className="uppercase tracking-[0.4em] text-sm mt-4">Scroll down to see more</p>
                 </motion.div>
             </div>
