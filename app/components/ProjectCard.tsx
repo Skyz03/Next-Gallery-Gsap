@@ -7,11 +7,13 @@ interface ProjectProps {
     location: string;
     aspect: "portrait" | "landscape";
     index: number; // Use index to stagger animations
+    onClick: () => void;
 }
 
-export default function ProjectCard({ image, title, location, aspect, index }: ProjectProps) {
+export default function ProjectCard({ image, title, location, aspect, index, onClick }: ProjectProps) {
     return (
         <motion.div
+            onClick={onClick}
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
