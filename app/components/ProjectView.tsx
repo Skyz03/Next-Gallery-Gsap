@@ -66,7 +66,7 @@ export default function ProjectView({ project, onClose }: ProjectViewProps) {
             {/* HORIZONTAL SCROLL CONTAINER */}
             <div
                 ref={scrollRef}
-                className="w-full h-full flex flex-col md:flex-row md:overflow-x-auto md:overflow-y-hidden overflow-y-auto no-scrollbar"
+                className="w-full h-full flex flex-col md:flex-row md:overflow-x-auto md:overflow-y-hidden overflow-y-auto no-scrollbar md:overflow-x-auto md:overflow-y-hidden"
             >
 
                 {/* ================================= */}
@@ -75,10 +75,12 @@ export default function ProjectView({ project, onClose }: ProjectViewProps) {
                 <section className="relative min-w-[100vw] flex-shrink-0 h-screen flex flex-col md:flex-row items-stretch overflow-hidden">
                     {/* Image */}
                     <div className="absolute inset-0 md:relative md:w-1/2 md:order-2 h-full bg-neutral-200">
-                        <img
+                        <Image
                             src={project.coverImage}
                             alt={project.title}
                             className="w-full h-full object-cover"
+                            sizes="(max-width: 768px) 100vw, 60vw"
+                            fill
                         />
                         <div className="absolute inset-0 bg-black/30 md:hidden" />
                     </div>
@@ -119,14 +121,19 @@ export default function ProjectView({ project, onClose }: ProjectViewProps) {
                                 key={`${project.id}-img-${index}`}
                                 className="w-full md:w-[60vw] lg:w-[45vw] h-[70vh] md:h-[85vh] flex-shrink-0 flex flex-col gap-6 justify-center"
                             >
-                                <div className="w-full h-full overflow-hidden bg-neutral-100">
-                                    <img
-                                        src={img}
-                                        alt={`${project.title} gallery ${index}`}
-                                        className="w-full h-full object-cover md:object-contain"
-                                        onError={() => console.log("FAILED:", img)}
-                                        onLoad={() => console.log("LOADED:", img)}
-                                    />
+                                <div className="relative w-full h-full">
+
+                                    <div className="w-full h-full overflow-hidden bg-neutral-100">
+                                        <Image
+                                            fill
+                                            src={img}
+                                            alt={`${project.title} gallery ${index}`}
+                                            className="w-full h-full object-cover md:object-contain"
+                                            onError={() => console.log("FAILED:", img)}
+                                            onLoad={() => console.log("LOADED:", img)}
+
+                                        />
+                                    </div>
                                 </div>
 
                                 <p
