@@ -1,5 +1,5 @@
 "use client";
-import { motion, useSpring, useMotionValue, AnimatePresence } from "framer-motion";
+import { motion, useSpring, useMotionValue } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 interface ProjectViewProps {
@@ -16,41 +16,27 @@ const brandStyle = "uppercase tracking-[0.25em] font-light";
 
 export default function ProjectView({ project, onClose }: ProjectViewProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
-
-    // 1. Motion Values for smooth physics
     const targetX = useMotionValue(0);
-    const smoothX = useSpring(targetX, {
-        damping: 45,    // Resistance (higher = less bouncy)
-        stiffness: 160, // Power (higher = faster)
-        mass: 1,        // Weight
-    });
+    const smoothX = useSpring(targetX, { damping: 45, stiffness: 160, mass: 1 });
 
     useEffect(() => {
         const el = scrollRef.current;
-        if (!el) return;
+        if (!el || window.innerWidth < 768) return;
 
         const handleWheel = (e: WheelEvent) => {
-            // Check if user is scrolling vertically
             if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
                 e.preventDefault();
-
                 const maxScroll = el.scrollWidth - el.clientWidth;
-                // Sensitivity: 1.2 makes it feel a bit faster/premium
-                const step = e.deltaY * 1.2;
-                const next = targetX.get() + step;
-
+                const next = targetX.get() + e.deltaY * 1.2;
                 targetX.set(Math.max(0, Math.min(next, maxScroll)));
             }
         };
 
-        // Connect the Spring value to the actual DOM scroll position
         const unsubscribe = smoothX.on("change", (latest) => {
             if (el) el.scrollLeft = latest;
         });
 
         el.addEventListener("wheel", handleWheel, { passive: false });
-
-        // Prevent background scrolling
         document.body.style.overflow = "hidden";
 
         return () => {
@@ -65,87 +51,68 @@ export default function ProjectView({ project, onClose }: ProjectViewProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[300] bg-[#fafafa] overflow-hidden"
+            className="fixed inset-0 z-[300] bg-[#fafafa] overflow-y-auto md:overflow-hidden"
         >
+            {/* CLOSE BUTTON - Works across all colors via mix-blend */}
+            <button
+                onClick={onClose}
+                className={`fixed top-8 right-8 z-[350] ${brandStyle} text-[10px] mix-blend-difference text-white hover:line-through cursor-pointer`}
+            >
+                Close
+            </button>
+
             <div
                 ref={scrollRef}
-                className="w-full h-full flex overflow-x-auto overflow-y-hidden items-center select-none no-scrollbar"
+                className="w-full h-full flex flex-col md:flex-row md:items-center no-scrollbar"
             >
-                {/* 1️⃣ THE HERO SECTION — FULL BLEED 50/50 SPLIT */}
-                <section className="min-w-[100vw] h-screen flex flex-col md:flex-row items-stretch overflow-hidden flex-shrink-0">
-
-                    {/* LEFT SIDE: TEXT CONTENT */}
-                    <div className="w-full md:w-1/2 h-full flex flex-col justify-center px-10 md:px-20 lg:px-32 bg-[#fafafa]">
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.4, duration: 1 }}
-                            className="flex flex-col gap-8"
-                        >
-                            <div className="space-y-4">
-                                <span className={`${brandStyle} text-[8px] opacity-40 block tracking-[0.5em]`}>
-                                    Project — {project.client}
-                                </span>
-                                <h1 className="font-serif italic text-5xl md:text-7xl lg:text-8xl lowercase opacity-90 leading-[0.85] -ml-1">
-                                    {project.title}
-                                </h1>
-                            </div>
-
-                            <p className="text-[11px] leading-relaxed text-black/50 font-light tracking-wide max-w-sm">
-                                {project.description}
-                            </p>
-
-                            <button
-                                onClick={onClose}
-                                className={`${brandStyle} text-[9px] opacity-40 hover:opacity-100 hover:line-through transition-all w-fit mt-6 cursor-pointer`}
-                            >
-                                Back to Index
-                            </button>
-                        </motion.div>
-                    </div>
-
-                    {/* RIGHT SIDE: PRIMARY HERO IMAGE */}
-                    <div className="w-full md:w-1/2 h-full overflow-hidden">
-                        <motion.img
-                            initial={{ scale: 1.1, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                {/* 1️⃣ HERO SECTION */}
+                <section className="relative min-w-full h-screen flex-shrink-0 flex flex-col md:flex-row items-stretch">
+                    {/* Image Half */}
+                    <div className="absolute inset-0 md:relative md:w-1/2 md:order-2 h-full bg-neutral-200">
+                        <img
                             src={project.images[0]}
-                            alt={project.title}
+                            alt=""
                             className="w-full h-full object-cover"
                         />
+                        <div className="absolute inset-0 bg-black/20 md:hidden" />
+                    </div>
+
+                    {/* Text Half */}
+                    <div className="relative z-10 w-full md:w-1/2 h-full flex flex-col justify-end md:justify-center px-8 pb-24 md:pb-0 md:px-20 lg:px-32">
+                        <div className="flex flex-col gap-6">
+                            <span className={`${brandStyle} text-[8px] text-white/80 md:text-black/40 block`}>
+                                {project.client}
+                            </span>
+                            <h1 className="font-serif italic text-5xl md:text-7xl lg:text-8xl text-white md:text-black leading-[0.85] lowercase">
+                                {project.title}
+                            </h1>
+                            <p className="text-[11px] text-white/70 md:text-black/50 font-light max-w-sm">
+                                {project.description}
+                            </p>
+                        </div>
                     </div>
                 </section>
 
-                {/* 2️⃣ GALLERY SECTION — EDITORIAL 85VH FLOW */}
-                <div className="flex items-center gap-16 md:gap-40 px-[15vw] h-full flex-shrink-0">
+                {/* 2️⃣ GALLERY SECTION */}
+                <div className="flex flex-col md:flex-row md:items-center gap-0 md:gap-40 md:px-[15vw]">
                     {project.images.slice(1).map((img, index) => (
-                        <motion.div
+                        <div
                             key={index}
-                            className="h-[65vh] md:h-[85vh] flex-shrink-0 flex flex-col gap-6"
+                            className="w-full md:w-auto h-screen md:h-[85vh] flex-shrink-0 flex flex-col gap-6 justify-center"
                         >
                             <img
                                 src={img}
                                 alt=""
-                                className="h-full w-auto object-contain shadow-2xl shadow-black/[0.03] rounded-[2px]"
+                                className="w-full h-full object-cover md:object-contain bg-neutral-100"
                             />
-                            <div className="flex justify-between items-center px-1">
-                                <p className={`${brandStyle} text-[8px] opacity-20`}>
-                                    {String(index + 2).padStart(2, '0')} / {String(project.images.length).padStart(2, '0')}
-                                </p>
-                            </div>
-                        </motion.div>
+                            <p className={`${brandStyle} text-[8px] opacity-20 hidden md:block text-center`}>
+                                {String(index + 2).padStart(2, '0')}
+                            </p>
+                        </div>
                     ))}
                 </div>
 
-                {/* FINAL SPACER FOR BREATHING ROOM */}
-                <div className="w-[30vw] flex-shrink-0 h-full" aria-hidden />
-            </div>
-
-            {/* OPTIONAL: ESCAPE HINT */}
-            <div className="fixed bottom-10 left-10 pointer-events-none hidden md:block">
-                <p className={`${brandStyle} text-[7px] opacity-20`}>Use Wheel to Navigate</p>
+                <div className="hidden md:block w-[20vw] flex-shrink-0" />
             </div>
         </motion.div>
     );

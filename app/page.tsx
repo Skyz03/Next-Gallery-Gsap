@@ -30,7 +30,7 @@ export default function Home() {
 
       <section className="relative z-20 -mt-[30vh] pb-24 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12">
-          
+
           {/* Column 1 */}
           <div className="lg:col-span-4 flex flex-col gap-12">
             {columns[0].map((project) => (
@@ -43,8 +43,14 @@ export default function Home() {
                 aspect={project.aspect}
                 // Update state with project data when clicked
                 onClick={() => setSelectedProject({
-                    ...project,
-                    images: [project.image, "/wed1.jpg", "/wed2.jpg", "/wed3.jpg"] // Sample gallery
+                  ...project,
+                  images: [
+                    `/wed${(project.id % 25) + 1}.jpg`,
+                    `/wed${((project.id + 1) % 25) + 1}.jpg`,
+                    `/wed${((project.id + 2) % 25) + 1}.jpg`,
+                    `/wed${((project.id + 3) % 25) + 1}.jpg`,
+                    `/wed${((project.id + 4) % 25) + 1}.jpg`,
+                  ]
                 })}
               />
             ))}
@@ -61,8 +67,8 @@ export default function Home() {
                 location={project.location}
                 aspect={project.aspect}
                 onClick={() => setSelectedProject({
-                    ...project,
-                    images: [project.image, "/wed4.jpg", "/wed5.jpg", "/wed6.jpg"]
+                  ...project,
+                  images: [project.image, "/wed4.jpg", "/wed5.jpg", "/wed6.jpg"]
                 })}
               />
             ))}
@@ -79,8 +85,8 @@ export default function Home() {
                 location={project.location}
                 aspect={project.aspect}
                 onClick={() => setSelectedProject({
-                    ...project,
-                    images: [project.image, "/wed7.jpg", "/wed8.jpg", "/wed9.jpg"]
+                  ...project,
+                  images: [project.image, "/wed7.jpg", "/wed8.jpg", "/wed9.jpg"]
                 })}
               />
             ))}
@@ -91,9 +97,9 @@ export default function Home() {
       {/* 2. Project Detail Overlay */}
       <AnimatePresence>
         {selectedProject && (
-          <ProjectView 
-            project={selectedProject} 
-            onClose={() => setSelectedProject(null)} 
+          <ProjectView
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
           />
         )}
       </AnimatePresence>
