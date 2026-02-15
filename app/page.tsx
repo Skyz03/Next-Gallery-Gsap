@@ -76,12 +76,7 @@ export default function Home() {
       <AnimatePresence>
         {selectedProject && (
           <ProjectView
-            // We pass the project, but we must ensure ProjectView 
-            // uses 'project.gallery' for the horizontal images
-            project={{
-              ...selectedProject,
-              images: selectedProject.gallery // Mapping gallery to the 'images' prop
-            }}
+            project={selectedProject} // Directly pass the object
             onClose={() => setSelectedProject(null)}
           />
         )}
