@@ -12,9 +12,9 @@ export interface Project {
 export const projects: Project[] = [
     {
         id: "ethereal-grace",
-        title: "ethereal grace",
-        client: "marco & brittney",
-        location: "Thamel",
+        title: "Sumit & Britannice",
+        client: "Marco & Brittney",
+        location: "Thamel, Kathmandu",
         aspect: "portrait",
         description: "A cinematic exploration of light and intimacy, captured through the Namaste Flux lens in the hills of Tuscany.",
         coverImage: "/wed1.jpg",
@@ -28,11 +28,11 @@ export const projects: Project[] = [
     },
     {
         id: "urban-solitude",
-        title: "urban solitude",
-        client: "kevin & sarah",
-        location: "Thamel",
+        title: "Kevin & Sarah",
+        client: "Kevin & Sarah",
+        location: "Thamel, Kathmandu",
         aspect: "portrait",
-        description: "Modern love meets the brutalist architecture of London.",
+        description: "Modern love meets the brutalist architecture of London, blending sharp lines with soft emotions.",
         coverImage: "/wed6.jpg",
         gallery: [
             "/wed6.jpg",
@@ -42,9 +42,9 @@ export const projects: Project[] = [
     },
     {
         id: "golden-hour-vows",
-        title: "golden hour vows",
-        client: "siddharth & rhea",
-        location: "Mustang",
+        title: "Siddharth & Rhea",
+        client: "Siddharth & Rhea",
+        location: "Upper Mustang, Nepal",
         aspect: "portrait",
         description: "High-altitude romance set against the rugged, wind-swept landscapes of Upper Mustang.",
         coverImage: "/wed9.jpg",
