@@ -1,104 +1,87 @@
-"use client"; // Must be at the top for useState
+"use client";
 
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import Hero from "./components/Hero";
 import ProjectCard from "./components/ProjectCard";
-import ProjectView from "./components/ProjectView"; // Make sure to create this file
-
-const weddingProjects = Array.from({ length: 25 }, (_, i) => ({
-  id: i,
-  image: `/wed${i + 1}.jpg`,
-  title: `Wedding ${i + 1}`,
-  client: "Client Name", // Added for ProjectView
-  description: "A timeless celebration of love and light. Every moment captured with the signature Namaste Flux aesthetic, blending raw emotion with cinematic composition.",
-  location: "Destination Wedding",
-  aspect: "portrait" as const,
-}));
+import ProjectView from "./components/ProjectView";
+import { projects, Project } from "@/data/project";
 
 export default function Home() {
-  // 1. State must be inside the component
-  const [selectedProject, setSelectedProject] = useState<any>(null);
+  // Use the Project type for better TypeScript support
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  const columns = [0, 1, 2].map((col) =>
-    weddingProjects.filter((project) => project.id % 3 === col)
-  );
+  // Split your real data into 3 columns for the masonry grid
+  const columns = [
+    projects.filter((_, i) => i % 3 === 0),
+    projects.filter((_, i) => i % 3 === 1),
+    projects.filter((_, i) => i % 3 === 2),
+  ];
 
   return (
     <main className="relative bg-[#faf9f6]">
       <Hero />
 
-      <section className="relative z-20 -mt-[30vh] pb-24 mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12">
+      <section className="relative z-20 -mt-[30vh] pb-24 px-4 md:px-10 mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 md:gap-12">
 
           {/* Column 1 */}
           <div className="lg:col-span-4 flex flex-col gap-12">
             {columns[0].map((project) => (
               <ProjectCard
                 key={project.id}
-                index={project.id}
-                image={project.image}
+                index={Number(project.id)}
+                image={project.coverImage}
                 title={project.title}
                 location={project.location}
                 aspect={project.aspect}
-                // Update state with project data when clicked
-                onClick={() => setSelectedProject({
-                  ...project,
-                  images: [
-                    `/wed${(project.id % 25) + 1}.jpg`,
-                    `/wed${((project.id + 1) % 25) + 1}.jpg`,
-                    `/wed${((project.id + 2) % 25) + 1}.jpg`,
-                    `/wed${((project.id + 3) % 25) + 1}.jpg`,
-                    `/wed${((project.id + 4) % 25) + 1}.jpg`,
-                  ]
-                })}
+                onClick={() => setSelectedProject(project)}
               />
             ))}
           </div>
 
-          {/* Column 2 */}
+          {/* Column 2 - Offset for Masonry feel */}
           <div className="lg:col-span-4 lg:mt-64 flex flex-col gap-12">
             {columns[1].map((project) => (
               <ProjectCard
                 key={project.id}
-                index={project.id}
-                image={project.image}
+                index={Number(project.id)}
+                image={project.coverImage}
                 title={project.title}
                 location={project.location}
                 aspect={project.aspect}
-                onClick={() => setSelectedProject({
-                  ...project,
-                  images: [project.image, "/wed4.jpg", "/wed5.jpg", "/wed6.jpg"]
-                })}
+                onClick={() => setSelectedProject(project)}
               />
             ))}
           </div>
 
-          {/* Column 3 */}
+          {/* Column 3 - Offset for Masonry feel */}
           <div className="lg:col-span-4 lg:mt-32 flex flex-col gap-12">
             {columns[2].map((project) => (
               <ProjectCard
                 key={project.id}
-                index={project.id}
-                image={project.image}
+                index={Number(project.id)}
+                image={project.coverImage}
                 title={project.title}
                 location={project.location}
                 aspect={project.aspect}
-                onClick={() => setSelectedProject({
-                  ...project,
-                  images: [project.image, "/wed7.jpg", "/wed8.jpg", "/wed9.jpg"]
-                })}
+                onClick={() => setSelectedProject(project)}
               />
             ))}
           </div>
         </div>
       </section>
 
-      {/* 2. Project Detail Overlay */}
+      {/* Project Detail Overlay */}
       <AnimatePresence>
         {selectedProject && (
           <ProjectView
-            project={selectedProject}
+            // We pass the project, but we must ensure ProjectView 
+            // uses 'project.gallery' for the horizontal images
+            project={{
+              ...selectedProject,
+              images: selectedProject.gallery // Mapping gallery to the 'images' prop
+            }}
             onClose={() => setSelectedProject(null)}
           />
         )}
