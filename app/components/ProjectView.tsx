@@ -4,15 +4,17 @@ import { motion, useSpring, useMotionValue } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { Project } from "@/data/project";
 import Image from "next/image";
+import Link from "next/link";
 
 interface ProjectViewProps {
     project: Project;
-    onClose: () => void;
+    onClose?: () => void;
+    isStandalone?: boolean;
 }
 
 const brandStyle = "uppercase tracking-[0.25em] font-light";
 
-export default function ProjectView({ project, onClose }: ProjectViewProps) {
+export default function ProjectView({ project, onClose, isStandalone = false }: ProjectViewProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
     const targetX = useMotionValue(0);
     const smoothX = useSpring(targetX, {
@@ -56,12 +58,21 @@ export default function ProjectView({ project, onClose }: ProjectViewProps) {
             className="fixed inset-0 z-[300] bg-[#fafafa] overflow-y-auto md:overflow-hidden"
         >
             {/* CLOSE BUTTON */}
-            <button
-                onClick={onClose}
-                className={`fixed top-8 right-8 z-[350] ${brandStyle} text-[10px] mix-blend-difference text-white hover:line-through cursor-pointer shadow-sm`}
-            >
-                Close
-            </button>
+            {isStandalone ? (
+                <Link
+                    href="/"
+                    className={`fixed top-8 right-8 z-[350] ${brandStyle} text-[10px] mix-blend-difference text-white hover:line-through cursor-pointer shadow-sm`}
+                >
+                    Back to Index
+                </Link>
+            ) : (
+                <button
+                    onClick={onClose}
+                    className={`fixed top-8 right-8 z-[350] ${brandStyle} text-[10px] mix-blend-difference text-white hover:line-through cursor-pointer shadow-sm`}
+                >
+                    Close
+                </button>
+            )}
 
             {/* HORIZONTAL SCROLL CONTAINER */}
             <div

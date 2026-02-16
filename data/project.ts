@@ -1,5 +1,6 @@
 export interface Project {
     id: string;
+    slug: string;
     title: string;
     client: string;
     description: string;
@@ -12,6 +13,7 @@ export interface Project {
 export const projects: Project[] = [
     {
         id: "ethereal-grace",
+        slug: "marco-and-brittney",
         title: "Sumit & Britannice",
         client: "Marco & Brittney",
         location: "Thamel, Kathmandu",
@@ -28,6 +30,7 @@ export const projects: Project[] = [
     },
     {
         id: "urban-solitude",
+        slug: "kevin-and-sarah",
         title: "Kevin & Sarah",
         client: "Kevin & Sarah",
         location: "Thamel, Kathmandu",
@@ -42,6 +45,7 @@ export const projects: Project[] = [
     },
     {
         id: "golden-hour-vows",
+        slug: "siddharth-and-rhea",
         title: "Siddharth & Rhea",
         client: "Siddharth & Rhea",
         location: "Upper Mustang, Nepal",

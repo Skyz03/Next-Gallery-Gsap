@@ -1,4 +1,5 @@
 import { supabase } from "./supbase";
+import { generateSlug } from "./slug";
 
 export async function getProjects() {
   const { data, error } = await supabase
@@ -13,6 +14,7 @@ export async function getProjects() {
 
   return data?.map((project) => ({
     id: String(project.id),
+    slug: generateSlug(project.client),
     title: project.title,
     client: project.client,
     location: project.location,

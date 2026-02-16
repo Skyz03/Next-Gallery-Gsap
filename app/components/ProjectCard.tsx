@@ -7,18 +7,16 @@ interface ProjectProps {
     location: string;
     aspect: "portrait" | "landscape";
     index: number; // Use index to stagger animations
-    onClick: () => void;
 }
 
-export default function ProjectCard({ image, title, location, aspect, index, onClick }: ProjectProps) {
+export default function ProjectCard({ image, title, location, aspect, index }: ProjectProps) {
     return (
         <motion.div
-            onClick={onClick}
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.8, delay: (index % 3) * 0.1, ease: "easeOut" }}
-            className="group cursor-pointer w-full p-4"
+            className="group w-full p-4"
         >
             <div className={`relative overflow-hidden ${aspect === "portrait" ? "aspect-[3/4]" : "aspect-[16/10]"}`}>
                 <motion.img
