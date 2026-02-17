@@ -19,7 +19,7 @@ export default function Navigation() {
                         className="uppercase tracking-[0.5em] text-[13px] md:text-[15px] font-bold leading-[1.8] hover:opacity-50 text-left transition-all cursor-pointer"
                     >
                         Namaste<br />
-                        Gallery
+                        Studio
                     </button>
                 </div>  
 
