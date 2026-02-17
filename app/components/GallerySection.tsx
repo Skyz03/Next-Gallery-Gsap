@@ -22,8 +22,31 @@ export default function GallerySection({ projects }: GallerySectionProps) {
 
   return (
     <>
-      <section className="relative z-20 -mt-[30vh] pb-24 px-4 md:px-10 mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 md:gap-12">
+      <section className="relative z-20 -mt-[30vh] pb-24 px-2 md:px-10 mx-auto">
+        {/* Mobile: two-column image grid with centered hover text */}
+        <div className="grid grid-cols-2 gap-2 lg:gap-4 lg:hidden">
+          {projects.map((project) => (
+            <Link key={project.id} href={`/projects/${project.slug}`} className="group block">
+              <div className="relative w-full h-40 overflow-hidden rounded-md">
+                <img
+                  src={project.coverImage}
+                  alt={project.title}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-center">
+                    <span className="bg-black bg-opacity-60 text-white px-3 py-1 rounded text-sm">
+                      {project.title}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Desktop / large: original 3-column staggered layout */}
+        <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 md:gap-12">
           <div className="lg:col-span-4 flex flex-col gap-12">
             {columns[0].map((project, i) => (
               <Link key={project.id} href={`/projects/${project.slug}`} className="group cursor-pointer">
