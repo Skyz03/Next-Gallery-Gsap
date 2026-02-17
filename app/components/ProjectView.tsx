@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useSpring, useMotionValue } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Project } from "@/data/project";
 import Image from "next/image";
 import Link from "next/link";
@@ -49,6 +49,15 @@ export default function ProjectView({ project, onClose, isStandalone = false }: 
             document.body.style.overflow = "unset";
         };
     }, [targetX, smoothX]);
+
+    // Detect mobile viewport to render a simplified vertical gallery
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const check = () => setIsMobile(typeof window !== "undefined" && window.innerWidth < 768);
+        check();
+        window.addEventListener("resize", check);
+        return () => window.removeEventListener("resize", check);
+    }, []);
 
     return (
         <motion.div
@@ -125,37 +134,44 @@ export default function ProjectView({ project, onClose, isStandalone = false }: 
                 {/* ================================= */}
                 {/* GALLERY SECTION */}
                 {/* ================================= */}
-                <section className="min-w-[100vw] flex-shrink-0 flex items-center">
-                    <div className="flex md:flex-row flex-col gap-8 md:gap-16 px-6 md:px-[3vw] w-max">
+                {isMobile ? (
+                    <section className="px-6 pb-12 space-y-6">
                         {project.gallery.map((img, index) => (
-                            <div
-                                key={`${project.id}-img-${index}`}
-                                className="w-full md:w-[60vw] lg:w-[45vw] h-[70vh] md:h-[85vh] flex-shrink-0 flex flex-col gap-6 justify-center"
-                            >
-                                <div className="relative w-full h-full">
-
-                                    <div className="w-full h-full overflow-hidden bg-neutral-100">
-                                        <Image
-                                            fill
-                                            src={img}
-                                            alt={`${project.title} gallery ${index}`}
-                                            className="w-full h-full object-cover md:object-contain"
-                                            onError={() => console.log("FAILED:", img)}
-                                            onLoad={() => console.log("LOADED:", img)}
-
-                                        />
-                                    </div>
-                                </div>
-
-                                <p
-                                    className={`${brandStyle} text-[8px] opacity-20 hidden md:block text-center`}
-                                >
-                                    {String(index + 1).padStart(2, "0")}
-                                </p>
+                            <div key={`${project.id}-img-${index}`} className="w-full overflow-hidden rounded bg-neutral-100">
+                                <img src={img} alt={`${project.title} gallery ${index}`} className="w-full h-auto object-cover" />
+                                <p className={`${brandStyle} text-[8px] opacity-40 text-center mt-2`}>{String(index + 1).padStart(2, "0")}</p>
                             </div>
                         ))}
-                    </div>
-                </section>
+                    </section>
+                ) : (
+                    <section className="min-w-[100vw] flex-shrink-0 flex items-center">
+                        <div className="flex md:flex-row flex-col gap-8 md:gap-16 px-6 md:px-[3vw] w-max">
+                            {project.gallery.map((img, index) => (
+                                <div
+                                    key={`${project.id}-img-${index}`}
+                                    className="w-full md:w-[60vw] lg:w-[45vw] h-[70vh] md:h-[85vh] flex-shrink-0 flex flex-col gap-6 justify-center"
+                                >
+                                    <div className="relative w-full h-full">
+                                        <div className="w-full h-full overflow-hidden bg-neutral-100">
+                                            <Image
+                                                fill
+                                                src={img}
+                                                alt={`${project.title} gallery ${index}`}
+                                                className="w-full h-full object-cover md:object-contain"
+                                                onError={() => console.log("FAILED:", img)}
+                                                onLoad={() => console.log("LOADED:", img)}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <p className={`${brandStyle} text-[8px] opacity-20 hidden md:block text-center`}>
+                                        {String(index + 1).padStart(2, "0")}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 {/* Desktop Spacer */}
                 <div className="hidden md:block w-[30vw] flex-shrink-0" />
