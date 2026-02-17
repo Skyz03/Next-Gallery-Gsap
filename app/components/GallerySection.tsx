@@ -22,12 +22,12 @@ export default function GallerySection({ projects }: GallerySectionProps) {
 
   return (
     <>
-      <section className="relative z-20 pb-24 px-2 md:px-10 mx-auto">
+      <section className="relative z-20 px-2 md:px-10 mx-auto">
         {/* Mobile: two-column image grid with centered hover text */}
         <div className="grid grid-cols-2 gap-2 lg:gap-4 lg:hidden">
           {projects.map((project) => (
             <Link key={project.id} href={`/projects/${project.slug}`} className="group block">
-              <div className="relative w-full h-40 overflow-hidden rounded-md">
+              <div className="relative w-full h-screen/2 rounded-md">
                 <img
                   src={project.coverImage}
                   alt={project.title}
