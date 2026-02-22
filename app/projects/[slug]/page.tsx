@@ -67,7 +67,7 @@ export default async function ProjectPage({
 
     return (
       <main>
-        <ProjectView project={project} isStandalone={true} />
+        <ProjectView project={project} allProjects={projects ?? []} isStandalone={true} />
       </main>
     );
   } catch (error) {

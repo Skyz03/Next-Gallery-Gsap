@@ -94,6 +94,7 @@ export default function GallerySection({ projects }: GallerySectionProps) {
         {selectedProject && (
           <ProjectView
             project={selectedProject}
+            allProjects={projects}
             onClose={() => setSelectedProject(null)}
           />
         )}
