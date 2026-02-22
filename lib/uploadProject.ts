@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "./supabaseAdmin";
+import { generateSlug } from "./slug";
 
 export type UploadProjectInput = {
   title: string;
@@ -9,27 +10,32 @@ export type UploadProjectInput = {
   files: File[];
 };
 
+function sanitize(name: string) {
+  return name.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9._-]/g, "");
+}
+
+/**
+ * Storage layout per project:
+ *   project-images/
+ *     projects/<title-slug>/
+ *       cover.<ext>
+ *       gallery/
+ *         00-<filename>
+ *         01-<filename>
+ *         ...
+ */
 export async function uploadProject(data: UploadProjectInput): Promise<{ id: string }> {
   if (!data.files?.length) {
     throw new Error("At least one image is required.");
   }
 
-  const coverFile = data.files[0];
-  const coverPath = `covers/${Date.now()}-${coverFile.name.replace(/\s+/g, "-")}`;
-
-  const { error: uploadCoverError } = await supabaseAdmin.storage
-    .from("project-images")
-    .upload(coverPath, coverFile, { upsert: false });
-
-  if (uploadCoverError) {
-    throw new Error(`Cover upload failed: ${uploadCoverError.message}`);
+  const slug = generateSlug(data.title);
+  if (!slug) {
+    throw new Error("Title must produce a valid folder name.");
   }
+  const folder = `projects/${slug}`;
 
-  const { data: coverUrlData } = supabaseAdmin.storage
-    .from("project-images")
-    .getPublicUrl(coverPath);
-  const coverUrl = coverUrlData.publicUrl;
-
+  // 1. Insert project row
   const { data: project, error: insertError } = await supabaseAdmin
     .from("projects")
     .insert({
@@ -38,44 +44,72 @@ export async function uploadProject(data: UploadProjectInput): Promise<{ id: str
       location: data.location,
       description: data.description,
       aspect: data.aspect,
-      cover_image: coverUrl,
+      cover_image: "",
     })
     .select("id")
     .single();
 
-  if (insertError) {
-    throw new Error(`Project create failed: ${insertError.message}`);
-  }
-  if (!project?.id) {
-    throw new Error("Project created but no id returned.");
+  if (insertError || !project?.id) {
+    throw new Error(`Project create failed: ${insertError?.message}`);
   }
 
+  const projectId = project.id;
+
+  // 2. Upload cover (first file)
+  const coverFile = data.files[0];
+  const ext = coverFile.name.split(".").pop() ?? "jpg";
+  const coverPath = `${folder}/cover.${ext}`;
+
+  const { error: coverErr } = await supabaseAdmin.storage
+    .from("project-images")
+    .upload(coverPath, coverFile, { upsert: true });
+
+  if (coverErr) {
+    await supabaseAdmin.from("projects").delete().eq("id", projectId);
+    throw new Error(`Cover upload failed: ${coverErr.message}`);
+  }
+
+  const coverUrl = supabaseAdmin.storage
+    .from("project-images")
+    .getPublicUrl(coverPath).data.publicUrl;
+
+  const { error: updateErr } = await supabaseAdmin
+    .from("projects")
+    .update({ cover_image: coverUrl })
+    .eq("id", projectId);
+
+  if (updateErr) {
+    throw new Error(`Cover URL update failed: ${updateErr.message}`);
+  }
+
+  // 3. Upload gallery images (all files including cover as first gallery image)
   for (let i = 0; i < data.files.length; i++) {
     const file = data.files[i];
-    const path = `gallery/${project.id}-${i}-${file.name.replace(/\s+/g, "-")}`;
+    const idx = String(i).padStart(2, "0");
+    const path = `${folder}/gallery/${idx}-${sanitize(file.name)}`;
 
-    const { error: galleryUploadError } = await supabaseAdmin.storage
+    const { error: galleryErr } = await supabaseAdmin.storage
       .from("project-images")
-      .upload(path, file, { upsert: false });
+      .upload(path, file, { upsert: true });
 
-    if (galleryUploadError) {
-      throw new Error(`Image ${i + 1} upload failed: ${galleryUploadError.message}`);
+    if (galleryErr) {
+      throw new Error(`Image ${i + 1} upload failed: ${galleryErr.message}`);
     }
 
-    const { data: imageUrlData } = supabaseAdmin.storage
+    const imageUrl = supabaseAdmin.storage
       .from("project-images")
-      .getPublicUrl(path);
+      .getPublicUrl(path).data.publicUrl;
 
-    const { error: linkError } = await supabaseAdmin.from("project_images").insert({
-      project_id: project.id,
-      image_url: imageUrlData.publicUrl,
+    const { error: linkErr } = await supabaseAdmin.from("project_images").insert({
+      project_id: projectId,
+      image_url: imageUrl,
       position: i,
     });
 
-    if (linkError) {
-      throw new Error(`Image ${i + 1} link failed: ${linkError.message}`);
+    if (linkErr) {
+      throw new Error(`Image ${i + 1} link failed: ${linkErr.message}`);
     }
   }
 
-  return { id: String(project.id) };
+  return { id: String(projectId) };
 }

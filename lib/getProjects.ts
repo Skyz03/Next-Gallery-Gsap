@@ -1,13 +1,10 @@
-import { supabase } from "./supbase";
+import { supabase } from "./supabase";
 import { generateSlug } from "./slug";
 
 export async function getProjects() {
   const { data, error } = await supabase
     .from("projects")
-    .select(`
-      *,
-      project_images (*)
-    `)
+    .select(`*, project_images (*)`)
     .order("created_at", { ascending: false });
 
   if (error) throw error;
