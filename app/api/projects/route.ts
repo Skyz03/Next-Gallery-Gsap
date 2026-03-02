@@ -5,12 +5,17 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
 
+    const category = formData.get("category");
     const title = formData.get("title");
     const client = formData.get("client");
     const location = formData.get("location");
     const description = formData.get("description");
     const aspect = formData.get("aspect");
 
+    const validCategories = ["wedding", "music", "commercial"] as const;
+    const categoryStr = validCategories.includes(category as any)
+      ? (category as typeof validCategories[number])
+      : "wedding";
     const titleStr = typeof title === "string" ? title.trim() : "";
     const clientStr = typeof client === "string" ? client.trim() : "";
     const locationStr = typeof location === "string" ? location.trim() : "";
@@ -39,6 +44,7 @@ export async function POST(request: Request) {
     }
 
     const result = await uploadProject({
+      category: categoryStr,
       title: titleStr,
       client: clientStr,
       location: locationStr,

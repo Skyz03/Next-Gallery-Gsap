@@ -2,7 +2,7 @@
 
 import { motion, useSpring, useMotionValue } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Project } from "@/data/project";
+import { Project, getProjectHref } from "@/data/project";
 import Image from "next/image";
 import Link from "next/link";
 import SlideMenus from "./SlideMenus";
@@ -208,7 +208,7 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
                 {/* ═══ NEXT PROJECT CARD ═══ */}
                 {nextProject && (
                     <Link
-                        href={`/projects/${nextProject.slug}`}
+                        href={getProjectHref(nextProject)}
                         className={`relative flex-shrink-0 flex items-center justify-center snap-start group
                             ${isMobile ? "w-full h-screen" : "min-w-[100vw] h-full"}
                         `}

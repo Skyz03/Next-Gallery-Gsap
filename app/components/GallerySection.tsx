@@ -5,7 +5,7 @@ import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import ProjectCard from "./ProjectCard";
 import ProjectView from "./ProjectView";
-import type { Project } from "@/data/project";
+import { type Project, getProjectHref } from "@/data/project";
 
 interface GallerySectionProps {
   projects: Project[];
@@ -26,7 +26,7 @@ export default function GallerySection({ projects }: GallerySectionProps) {
         {/* Mobile: two-column image grid with centered hover text */}
         <div className="grid grid-cols-2 lg:gap-4 lg:hidden">
           {projects.map((project) => (
-            <Link key={project.id} href={`/projects/${project.slug}`} className="group block">
+            <Link key={project.id} href={getProjectHref(project)} className="group block">
               <div className="relative w-full h-full">
                 <img
                   src={project.coverImage}
@@ -49,7 +49,7 @@ export default function GallerySection({ projects }: GallerySectionProps) {
         <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 md:gap-12">
           <div className="lg:col-span-4 flex flex-col gap-12">
             {columns[0].map((project, i) => (
-              <Link key={project.id} href={`/projects/${project.slug}`} className="group cursor-pointer">
+              <Link key={project.id} href={getProjectHref(project)} className="group cursor-pointer">
                 <ProjectCard
                   index={i}
                   image={project.coverImage}
@@ -62,7 +62,7 @@ export default function GallerySection({ projects }: GallerySectionProps) {
           </div>
           <div className="lg:col-span-4 lg:mt-64 flex flex-col gap-12">
             {columns[1].map((project, i) => (
-              <Link key={project.id} href={`/projects/${project.slug}`} className="group cursor-pointer">
+              <Link key={project.id} href={getProjectHref(project)} className="group cursor-pointer">
                 <ProjectCard
                   index={i}
                   image={project.coverImage}
@@ -75,7 +75,7 @@ export default function GallerySection({ projects }: GallerySectionProps) {
           </div>
           <div className="lg:col-span-4 lg:mt-32 flex flex-col gap-12">
             {columns[2].map((project, i) => (
-              <Link key={project.id} href={`/projects/${project.slug}`} className="group cursor-pointer">
+              <Link key={project.id} href={getProjectHref(project)} className="group cursor-pointer">
                 <ProjectCard
                   index={i}
                   image={project.coverImage}

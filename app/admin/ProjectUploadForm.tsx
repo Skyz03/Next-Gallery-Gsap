@@ -80,6 +80,23 @@ export default function ProjectUploadForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
       <div>
+        <label htmlFor="category" className={labelClass}>
+          Category
+        </label>
+        <select
+          id="category"
+          name="category"
+          className={inputClass}
+          disabled={status === "loading"}
+          defaultValue="wedding"
+        >
+          <option value="wedding">Wedding</option>
+          <option value="music">Music</option>
+          <option value="commercial">Commercial</option>
+        </select>
+      </div>
+
+      <div>
         <label htmlFor="title" className={labelClass}>
           Title
         </label>
