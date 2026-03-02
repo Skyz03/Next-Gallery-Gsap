@@ -1,6 +1,20 @@
+export type ProjectCategory = "wedding" | "music" | "commercial";
+
+const categoryRouteMap: Record<ProjectCategory, string> = {
+  wedding: "/projects",
+  music: "/music",
+  commercial: "/commercial",
+};
+
+export function getProjectHref(project: { category: ProjectCategory; slug: string }) {
+  const base = categoryRouteMap[project.category] ?? "/projects";
+  return `${base}/${project.slug}`;
+}
+
 export interface Project {
     id: string;
     slug: string;
+    category: ProjectCategory;
     title: string;
     client: string;
     description: string;
@@ -14,6 +28,7 @@ export const projects: Project[] = [
     {
         id: "ethereal-grace",
         slug: "marco-and-brittney",
+        category: "wedding",
         title: "Sumit & Britannice",
         client: "Marco & Brittney",
         location: "Thamel, Kathmandu",
@@ -31,6 +46,7 @@ export const projects: Project[] = [
     {
         id: "urban-solitude",
         slug: "kevin-and-sarah",
+        category: "wedding",
         title: "Kevin & Sarah",
         client: "Kevin & Sarah",
         location: "Thamel, Kathmandu",
@@ -46,6 +62,7 @@ export const projects: Project[] = [
     {
         id: "golden-hour-vows",
         slug: "siddharth-and-rhea",
+        category: "wedding",
         title: "Siddharth & Rhea",
         client: "Siddharth & Rhea",
         location: "Upper Mustang, Nepal",

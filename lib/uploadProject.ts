@@ -1,7 +1,10 @@
 import { supabaseAdmin } from "./supabaseAdmin";
 import { generateSlug } from "./slug";
 
+import type { ProjectCategory } from "@/data/project";
+
 export type UploadProjectInput = {
+  category: ProjectCategory;
   title: string;
   client: string;
   location: string;
@@ -39,6 +42,7 @@ export async function uploadProject(data: UploadProjectInput): Promise<{ id: str
   const { data: project, error: insertError } = await supabaseAdmin
     .from("projects")
     .insert({
+      category: data.category,
       title: data.title,
       client: data.client,
       location: data.location,

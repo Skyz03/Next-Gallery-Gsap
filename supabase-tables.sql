@@ -3,6 +3,7 @@
 -- 1. Projects (gallery projects)
 create table if not exists public.projects (
   id uuid primary key default gen_random_uuid(),
+  category text not null default 'wedding' check (category in ('wedding', 'music', 'commercial')),
   title text not null,
   client text not null,
   location text,
@@ -11,6 +12,9 @@ create table if not exists public.projects (
   cover_image text not null,
   created_at timestamptz not null default now()
 );
+
+-- If the table already exists, add category column:
+-- alter table public.projects add column if not exists category text not null default 'wedding' check (category in ('wedding', 'music', 'commercial'));
 
 -- 2. Project images (gallery images per project)
 create table if not exists public.project_images (
