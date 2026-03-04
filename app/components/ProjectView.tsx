@@ -6,6 +6,8 @@ import { Project, getProjectHref } from "@/data/project";
 import Image from "next/image";
 import Link from "next/link";
 import SlideMenus from "./SlideMenus";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 interface ProjectViewProps {
     project: Project;
@@ -27,6 +29,40 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
     const targetX = useMotionValue(0);
     const smoothX = useSpring(targetX, { damping: 45, stiffness: 160, mass: 1 });
 
+    // ─── GSAP ANIMATIONS ───
+    useGSAP(() => {
+        if (!scrollRef.current) return;
+
+        // 1. Entrance Reveal for images
+        gsap.fromTo(".gsap-reveal",
+            { clipPath: "inset(0% 100% 0% 0%)", scale: 1.2 },
+            {
+                clipPath: "inset(0% 0% 0% 0%)",
+                scale: 1,
+                duration: 1.8,
+                ease: "power4.out",
+                stagger: 0.1
+            }
+        );
+
+        // 2. Parallax Effect for Desktop
+        if (!isMobile) {
+            const images = gsap.utils.toArray(".parallax-img");
+            images.forEach((img: any) => {
+                gsap.to(img, {
+                    xPercent: -15, // Moves the image slightly opposite to scroll direction
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: img,
+                        scroller: scrollRef.current,
+                        horizontal: true,
+                        scrub: true,
+                    }
+                });
+            });
+        }
+    }, { scope: scrollRef, dependencies: [isMobile] });
+
     // Find next project
     const currentIdx = allProjects.findIndex((p) => p.id === project.id);
     const nextProject = allProjects.length > 1
@@ -42,11 +78,11 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
             const idx = Math.round(el.scrollTop / window.innerHeight);
             setCurrentSlide(Math.min(idx, totalSlides - 1));
         } else {
-            const slideWidth = el.scrollWidth / (totalSlides + 1); // +1 for next-project end card
+            const slideWidth = el.scrollWidth / (totalSlides + (nextProject ? 1 : 0));
             const idx = Math.round(el.scrollLeft / slideWidth);
             setCurrentSlide(Math.min(idx, totalSlides - 1));
         }
-    }, [isMobile, totalSlides]);
+    }, [isMobile, totalSlides, nextProject]);
 
     useEffect(() => {
         const check = () => setIsMobile(window.innerWidth < 768);
@@ -66,7 +102,11 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
             };
 
             const unsub = smoothX.on("change", (v) => {
-                if (el) el.scrollLeft = v;
+                if (el) {
+                    el.scrollLeft = v;
+                    // Sync GSAP with the Framer Motion spring scroll
+                    gsap.set(el, { scrollLeft: v });
+                }
                 updateCurrentSlide();
             });
             el.addEventListener("wheel", handleWheel, { passive: false });
@@ -100,8 +140,6 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
             {/* ─── TOP NAV BAR ─── */}
             <div className="fixed inset-x-0 top-0 z-[350] pointer-events-none p-6 md:p-10 mix-blend-difference text-white">
                 <div className="flex items-start justify-between">
-
-                    {/* LEFT: Back */}
                     <div className="pointer-events-auto w-1/3">
                         {isStandalone ? (
                             <Link href="/" className={`${uiText} hover:line-through`}>Back</Link>
@@ -110,17 +148,15 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
                         )}
                     </div>
 
-                    {/* CENTER: Branding */}
-                    <div className="pointer-events-auto w-1/3 flex justify-center">
+                    <div className="pointer-events-auto w-1/3 flex justify-center text-center">
                         <Link
                             href="/"
-                            className="uppercase tracking-[0.5em] text-[13px] md:text-[15px] font-bold leading-[1.8] hover:opacity-50 text-center transition-all block"
+                            className="uppercase tracking-[0.5em] text-[13px] md:text-[15px] font-bold leading-[1.8] hover:opacity-50 transition-all block"
                         >
                             Namaste<br />Studio
                         </Link>
                     </div>
 
-                    {/* RIGHT: Menu */}
                     <div className="pointer-events-auto w-1/3 flex justify-end">
                         <button
                             onClick={() => setMenuOpen("menu")}
@@ -133,10 +169,9 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
                 </div>
             </div>
 
-            {/* ─── BOTTOM BAR: Slide number + Contact ─── */}
+            {/* ─── BOTTOM BAR ─── */}
             <div className="fixed inset-x-0 bottom-0 z-[350] pointer-events-none p-6 md:p-10 mix-blend-difference text-white">
                 <div className="flex items-end justify-between">
-                    {/* LEFT: Slide number — large, just the number */}
                     <div className="uppercase tracking-[0.3em] font-bold tabular-nums text-2xl md:text-4xl pointer-events-none">
                         {currentSlide === 0
                             ? project.location
@@ -144,7 +179,6 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
                         }
                     </div>
 
-                    {/* RIGHT: Contact */}
                     <button
                         onClick={() => setMenuOpen("contact")}
                         className={`${uiText} hover:line-through pointer-events-auto`}
@@ -164,21 +198,23 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
             >
                 {/* ═══ HERO ═══ */}
                 <section className="relative min-w-[100vw] h-screen flex-shrink-0 flex flex-col md:flex-row items-stretch snap-start">
-                    <div className="absolute inset-0 md:relative md:w-1/2 md:order-2 h-full bg-neutral-200">
-                        <Image src={project.coverImage} alt={project.title} fill priority className="object-cover" />
+                    <div className="absolute inset-0 md:relative md:w-1/2 md:order-2 h-full bg-neutral-200 overflow-hidden">
+                        <div className="parallax-img gsap-reveal relative w-full h-full scale-110">
+                            <Image src={project.coverImage} alt={project.title} fill priority className="object-cover" />
+                        </div>
                         <div className="absolute inset-0 bg-black/30 md:hidden" />
                     </div>
                     <div className="relative z-10 w-full md:w-1/2 h-full flex flex-col justify-end md:justify-center px-8 pb-24 md:pb-0 md:px-20 lg:px-32">
-                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col gap-6">
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="flex flex-col gap-6 text-white md:text-black">
                             <div className="space-y-2">
-                                <span className="uppercase tracking-[0.25em] font-light text-[8px] text-white/80 md:text-black/40 block">
+                                <span className="uppercase tracking-[0.25em] font-light text-[8px] opacity-60 block">
                                     {project.location} — {project.client}
                                 </span>
-                                <h1 className="font-serif italic text-5xl md:text-8xl text-white md:text-black leading-[0.85] lowercase">
+                                <h1 className="font-serif italic text-5xl md:text-8xl leading-[0.85] lowercase">
                                     {project.title}
                                 </h1>
                             </div>
-                            <p className="text-[11px] text-white/70 md:text-black/50 max-w-sm leading-relaxed tracking-wide">
+                            <p className="text-[11px] opacity-70 max-w-sm leading-relaxed tracking-wide">
                                 {project.description}
                             </p>
                         </motion.div>
@@ -193,14 +229,16 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
                             ${isMobile ? "w-full h-screen" : "w-[60vw] h-full px-[5vw]"}
                         `}
                     >
-                        <div className="relative w-full h-full">
-                            <Image
-                                src={img}
-                                alt={`${project.title} — ${index + 1}`}
-                                fill
-                                className={isMobile ? "object-cover" : "object-contain"}
-                                sizes="(max-width: 768px) 100vw, 60vw"
-                            />
+                        <div className="relative w-full h-full overflow-hidden gsap-reveal">
+                            <div className="parallax-img relative w-full h-full scale-110">
+                                <Image
+                                    src={img}
+                                    alt={`${project.title} — ${index + 1}`}
+                                    fill
+                                    className={isMobile ? "object-cover" : "object-contain"}
+                                    sizes="(max-width: 768px) 100vw, 60vw"
+                                />
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -213,14 +251,16 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
                             ${isMobile ? "w-full h-screen" : "min-w-[100vw] h-full"}
                         `}
                     >
-                        <div className="absolute inset-0 bg-neutral-200">
-                            <Image
-                                src={nextProject.coverImage}
-                                alt={nextProject.title}
-                                fill
-                                className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                            />
-                            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors duration-500" />
+                        <div className="absolute inset-0 bg-neutral-200 overflow-hidden">
+                            <div className="parallax-img relative w-full h-full scale-110">
+                                <Image
+                                    src={nextProject.coverImage}
+                                    alt={nextProject.title}
+                                    fill
+                                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                                />
+                            </div>
+                            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500" />
                         </div>
                         <div className="relative z-10 text-center text-white">
                             <p className={`${uiText} text-[8px] opacity-60 mb-4`}>Next Project</p>
@@ -234,11 +274,9 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
                     </Link>
                 )}
 
-                {/* Desktop spacer (only if no next project) */}
                 {!nextProject && !isMobile && <div className="min-w-[20vw] flex-shrink-0" />}
             </div>
 
-            {/* ─── SLIDE MENU (shared with main nav) ─── */}
             <SlideMenus
                 isMenuOpen={menuOpen === "menu"}
                 isContactOpen={menuOpen === "contact"}
