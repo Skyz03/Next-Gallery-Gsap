@@ -37,7 +37,7 @@ export default function SlideMenus({ isMenuOpen, isContactOpen, onClose }: Props
                     >
                         <button
                             onClick={onClose}
-                            className={`absolute top-10 right-10 ${brandStyle} text-[10px] hover:line-through cursor-pointer`}
+                            className={`absolute top-14 right-4 ${brandStyle} text-[10px] hover:line-through cursor-pointer`}
                         >
                             Close — Menu
                         </button>
@@ -70,7 +70,7 @@ export default function SlideMenus({ isMenuOpen, isContactOpen, onClose }: Props
                     >
                         <button
                             onClick={onClose}
-                            className={`absolute top-10 right-10 ${brandStyle} text-[10px] hover:line-through cursor-pointer`}
+                            className={`absolute top-12 right-10 ${brandStyle} text-[10px] hover:line-through cursor-pointer`}
                         >
                             Close — Contact
                         </button>

@@ -16,7 +16,7 @@ interface ProjectViewProps {
     isStandalone?: boolean;
 }
 
-const uiText = "uppercase tracking-[0.4em] text-[10px] md:text-[13px] font-bold transition-all cursor-pointer";
+const uiText = "uppercase tracking-[0.4em] text-[9px] md:text-[13px] font-bold transition-all cursor-pointer";
 
 export default function ProjectView({ project, allProjects = [], onClose, isStandalone = false }: ProjectViewProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -134,7 +134,7 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
                     </div>
 
                     <div className="pointer-events-auto text-center">
-                        <Link href="/" className="uppercase tracking-[0.4em] text-[11px] md:text-[15px] font-bold leading-none block">
+                        <Link href="/" className="uppercase tracking-[0.4em] text-[10px] md:text-[15px] font-bold leading-none block">
                             Namaste Studio
                         </Link>
                     </div>

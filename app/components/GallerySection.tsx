@@ -1,18 +1,56 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { useRef } from "react";
 import Link from "next/link";
 import ProjectCard from "./ProjectCard";
-import ProjectView from "./ProjectView";
 import { type Project, getProjectHref } from "@/data/project";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 interface GallerySectionProps {
   projects: Project[];
 }
 
 export default function GallerySection({ projects }: GallerySectionProps) {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    const items = gsap.utils.toArray(".puzzle-item");
+
+    // The "Messed Up Puzzle" Initial State
+    gsap.fromTo(items,
+      {
+        opacity: 0,
+        scale: 0.5,
+        // Randomized scattering
+        x: () => (Math.random() - 0.5) * 400, // Scatters left/right up to 200px
+        y: () => (Math.random() - 0.5) * 400, // Scatters up/down up to 200px
+        rotationZ: () => (Math.random() - 0.5) * 40, // Random tilt
+        rotationX: () => (Math.random() - 0.5) * 50, // 3D tilt
+        filter: "blur(10px)",
+      },
+      {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        scale: 1,
+        rotationZ: 0,
+        rotationX: 0,
+        filter: "blur(0px)",
+        duration: 2.5,
+        ease: "expo.inOut", // Starts slow, snaps fast, ends smooth
+        stagger: {
+          amount: 0.8, // Total time spread across all items
+          from: "random" // Makes it feel organic, not a linear sequence
+        },
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 80%",
+          toggleActions: "play none none none"
+        }
+      }
+    );
+  }, { scope: containerRef });
 
   const columns = [
     projects.filter((_, i) => i % 3 === 0),
@@ -21,84 +59,70 @@ export default function GallerySection({ projects }: GallerySectionProps) {
   ];
 
   return (
-    <>
-      <section className="relative z-20 md:px-2 md:px-10 mx-auto">
-        {/* Mobile: two-column image grid with centered hover text */}
-        <div className="grid grid-cols-2 lg:gap-4 lg:hidden">
-          {projects.map((project) => (
-            <Link key={project.id} href={getProjectHref(project)} className="group block">
-              <div className="relative w-full h-full">
-                <img
-                  src={project.coverImage}
-                  alt={project.title}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-center">
-                    <span className="bg-black bg-opacity-60 text-white px-3 py-1 rounded text-sm">
-                      {project.title}
-                    </span>
-                  </div>
-                </div>
-              </div>
+    <section ref={containerRef} className="relative z-20 md:px-10 mx-auto overflow-hidden">
+
+      {/* ─── MOBILE GRID: Puzzle Pieces ─── */}
+      <div className="grid grid-cols-2 lg:hidden">
+        {projects.map((project) => (
+          <Link
+            key={project.id}
+            href={getProjectHref(project)}
+            className="puzzle-item group block perspective-1000"
+          >
+            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm shadow-2xl">
+              <img
+                src={project.coverImage}
+                alt={project.title}
+                className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-700"
+              />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* ─── DESKTOP GRID: Staggered Puzzle ─── */}
+      <div className="hidden lg:grid grid-cols-12 gap-12 py-20">
+        <div className="lg:col-span-4 flex flex-col gap-16">
+          {columns[0].map((project, i) => (
+            <Link key={project.id} href={getProjectHref(project)} className="puzzle-item group cursor-pointer perspective-1000">
+              <ProjectCard
+                index={i}
+                image={project.coverImage}
+                title={project.title}
+                location={project.location}
+                aspect={project.aspect}
+              />
             </Link>
           ))}
         </div>
-
-        {/* Desktop / large: original 3-column staggered layout */}
-        <div className="hidden lg:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 md:gap-12">
-          <div className="lg:col-span-4 flex flex-col gap-12">
-            {columns[0].map((project, i) => (
-              <Link key={project.id} href={getProjectHref(project)} className="group cursor-pointer">
-                <ProjectCard
-                  index={i}
-                  image={project.coverImage}
-                  title={project.title}
-                  location={project.location}
-                  aspect={project.aspect}
-                />
-              </Link>
-            ))}
-          </div>
-          <div className="lg:col-span-4 lg:mt-64 flex flex-col gap-12">
-            {columns[1].map((project, i) => (
-              <Link key={project.id} href={getProjectHref(project)} className="group cursor-pointer">
-                <ProjectCard
-                  index={i}
-                  image={project.coverImage}
-                  title={project.title}
-                  location={project.location}
-                  aspect={project.aspect}
-                />
-              </Link>
-            ))}
-          </div>
-          <div className="lg:col-span-4 lg:mt-32 flex flex-col gap-12">
-            {columns[2].map((project, i) => (
-              <Link key={project.id} href={getProjectHref(project)} className="group cursor-pointer">
-                <ProjectCard
-                  index={i}
-                  image={project.coverImage}
-                  title={project.title}
-                  location={project.location}
-                  aspect={project.aspect}
-                />
-              </Link>
-            ))}
-          </div>
+        <div className="lg:col-span-4 lg:mt-80 flex flex-col gap-16">
+          {columns[1].map((project, i) => (
+            <Link key={project.id} href={getProjectHref(project)} className="puzzle-item group cursor-pointer perspective-1000">
+              <ProjectCard
+                index={i}
+                image={project.coverImage}
+                title={project.title}
+                location={project.location}
+                aspect={project.aspect}
+              />
+            </Link>
+          ))}
         </div>
-      </section>
-
-      {/* Keep this for backward compatibility - can be removed once fully migrated */}
-      <AnimatePresence>
-        {selectedProject && (
-          <ProjectView
-            project={selectedProject}
-            allProjects={projects}
-            onClose={() => setSelectedProject(null)}
-          />
-        )}
-      </AnimatePresence>
-    </>
+        <div className="lg:col-span-4 lg:mt-40 flex flex-col gap-16">
+          {columns[2].map((project, i) => (
+            <Link key={project.id} href={getProjectHref(project)} className="puzzle-item group cursor-pointer perspective-1000">
+              <ProjectCard
+                index={i}
+                image={project.coverImage}
+                title={project.title}
+                location={project.location}
+                aspect={project.aspect}
+              />
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

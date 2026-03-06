@@ -14,26 +14,42 @@ export default function MusicGallery({ projects }: MusicGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    // 1. Target all project cards
     const cards = gsap.utils.toArray(".music-card");
 
-    // 2. Create a batch reveal effect
+    // The "Deconstructed Record Collection" Initial State
     gsap.fromTo(cards,
       {
         opacity: 0,
-        y: 60,
-        clipPath: "inset(100% 0% 0% 0%)" // Image starts "hidden" at the bottom
+        scale: 0.4,
+        z: -500, // Start deep in 3D space
+        // Random "Explosion" coordinates
+        x: () => (Math.random() - 0.5) * 600,
+        y: () => (Math.random() - 0.5) * 600,
+        // Random tilts like falling papers
+        rotationX: () => (Math.random() - 0.5) * 100,
+        rotationY: () => (Math.random() - 0.5) * 100,
+        rotationZ: () => (Math.random() - 0.5) * 50,
+        filter: "blur(15px)",
       },
       {
         opacity: 1,
+        scale: 1,
+        z: 0,
+        x: 0,
         y: 0,
-        clipPath: "inset(0% 0% 0% 0%)",
-        duration: 1.2,
-        ease: "power4.out",
-        stagger: 0.15, // Creates that nice "one-after-another" flow
+        rotationX: 0,
+        rotationY: 0,
+        rotationZ: 0,
+        filter: "blur(0px)",
+        duration: 2.2,
+        ease: "expo.inOut",
+        stagger: {
+          amount: 1,
+          from: "random", // Makes the "assembly" feel more natural
+        },
         scrollTrigger: {
           trigger: containerRef.current,
-          start: "top 85%", // Starts animation when gallery is near bottom of screen
+          start: "top 85%",
           toggleActions: "play none none none",
         }
       }
@@ -49,35 +65,39 @@ export default function MusicGallery({ projects }: MusicGalleryProps) {
   }
 
   return (
-    <section ref={containerRef} className="px-2 md:px-10 pb-32">
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-8">
+    <section
+      ref={containerRef}
+      className="overflow-hidden perspective-2000"
+    >
+      <div className="grid grid-cols-2 md:grid-cols-3">
         {projects.map((project) => (
           <Link
             key={project.id}
             href={getProjectHref(project)}
-            className="music-card group block relative w-full aspect-[3/4] overflow-hidden bg-neutral-900"
+            className="music-card group block relative w-full aspect-[3/4] overflow-hidden bg-neutral-900 shadow-2xl rounded-sm"
+            style={{ transformStyle: "preserve-3d" }}
           >
-            {/* Image Layer - Standard img with GSAP hover in CSS/inline */}
+            {/* Image Layer */}
             <img
               src={project.coverImage}
               alt={project.title}
-              className="h-full w-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-[1200ms] ease-out"
+              className="h-full w-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-105 transition-all duration-[1500ms] ease-out"
             />
 
-            {/* Hover/Tap Overlay */}
-            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center p-4 text-center backdrop-blur-[2px]">
+            {/* Cinematic Music Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700 flex flex-col items-center justify-end p-6 text-center backdrop-blur-[1px]">
 
-              {/* Text elements with subtle slide-up on group hover */}
-              <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                <p className="text-[7px] md:text-[9px] uppercase tracking-[0.3em] text-white/80 mb-2">
+              <div className="translate-y-6 group-hover:translate-y-0 transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]">
+                <p className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] text-white/60 mb-3">
                   {project.location}
                 </p>
 
-                <h3 className="font-serif italic text-lg md:text-3xl text-white lowercase">
+                <h3 className="font-serif italic text-xl md:text-4xl text-white lowercase leading-tight">
                   {project.title}
                 </h3>
 
-                <div className="mt-4 mx-auto w-0 group-hover:w-8 h-[1px] bg-red-600 transition-all duration-700" />
+                {/* Progress bar accent (Red) */}
+                <div className="mt-6 mx-auto w-0 group-hover:w-12 h-[2px] bg-red-600 transition-all duration-1000 delay-100" />
               </div>
             </div>
           </Link>
