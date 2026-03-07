@@ -6,7 +6,7 @@ export default function Navigation() {
     const [openView, setOpenView] = useState<"none" | "menu" | "contact">("none");
 
     // We define a shared class to ensure they are identical
-    const uiTextStyle = "uppercase tracking-[0.5em] text-[10px] font-bold transition-all cursor-pointer";
+    const uiTextStyle = "uppercase tracking-[0.5em] text-[10px] font-bold transition-all cursor-pointer md:text-md lg:text-lg";
 
     return (
         <>
@@ -16,12 +16,12 @@ export default function Navigation() {
                 <div className="absolute top-10 left-10 pointer-events-auto">
                     <button
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                        className="uppercase tracking-[0.5em] text-[13px] md:text-[15px] font-bold leading-[1.8] hover:opacity-50 text-left transition-all cursor-pointer"
+                        className={` ${uiTextStyle}`}
                     >
                         Namaste<br />
                         Studio
                     </button>
-                </div>  
+                </div>
 
                 {/* TOP RIGHT: MENU TRIGGER */}
                 <div className="absolute top-10 right-10 pointer-events-auto text-right">
@@ -29,8 +29,7 @@ export default function Navigation() {
                         onClick={() => setOpenView("menu")}
                         className={`group flex flex-col items-end gap-1 ${uiTextStyle}`}
                     >
-                        <span className="mb-1">Menu</span>
-                        <div className="w-12 h-[1px] bg-white group-hover:w-6 transition-all duration-700 ease-in-out" />
+                        <span className="[writing-mode:vertical-lr] rotate-360">Menu</span>
                     </button>
                 </div>
 
@@ -40,7 +39,7 @@ export default function Navigation() {
                         onClick={() => setOpenView("contact")}
                         className={`${uiTextStyle} hover:line-through`}
                     >
-                        Contact
+                        <span className="[writing-mode:vertical-lr] rotate-360">Contact</span>
                     </button>
                 </div>
             </div>

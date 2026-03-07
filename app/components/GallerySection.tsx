@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import ProjectCard from "./ProjectCard";
 import { type Project, getProjectHref } from "@/data/project";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -17,16 +16,15 @@ export default function GallerySection({ projects }: GallerySectionProps) {
   useGSAP(() => {
     const items = gsap.utils.toArray(".puzzle-item");
 
-    // The "Messed Up Puzzle" Initial State
-    gsap.fromTo(items,
+    gsap.fromTo(
+      items,
       {
         opacity: 0,
         scale: 0.5,
-        // Randomized scattering
-        x: () => (Math.random() - 0.5) * 400, // Scatters left/right up to 200px
-        y: () => (Math.random() - 0.5) * 400, // Scatters up/down up to 200px
-        rotationZ: () => (Math.random() - 0.5) * 40, // Random tilt
-        rotationX: () => (Math.random() - 0.5) * 50, // 3D tilt
+        x: () => (Math.random() - 0.5) * 400,
+        y: () => (Math.random() - 0.5) * 400,
+        rotationZ: () => (Math.random() - 0.5) * 40,
+        rotationX: () => (Math.random() - 0.5) * 50,
         filter: "blur(10px)",
       },
       {
@@ -38,90 +36,58 @@ export default function GallerySection({ projects }: GallerySectionProps) {
         rotationX: 0,
         filter: "blur(0px)",
         duration: 2.5,
-        ease: "expo.inOut", // Starts slow, snaps fast, ends smooth
+        ease: "expo.inOut",
         stagger: {
-          amount: 0.8, // Total time spread across all items
-          from: "random" // Makes it feel organic, not a linear sequence
+          amount: 0.8,
+          from: "random",
         },
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top 80%",
-          toggleActions: "play none none none"
-        }
+          toggleActions: "play none none none",
+        },
       }
     );
   }, { scope: containerRef });
 
-  const columns = [
-    projects.filter((_, i) => i % 3 === 0),
-    projects.filter((_, i) => i % 3 === 1),
-    projects.filter((_, i) => i % 3 === 2),
-  ];
-
   return (
-    <section ref={containerRef} className="relative z-20 md:px-10 mx-auto overflow-hidden">
-
-      {/* ─── MOBILE GRID: Puzzle Pieces ─── */}
-      <div className="grid grid-cols-2 lg:hidden">
+    <section
+      ref={containerRef}
+      className="relative z-20 mx-auto overflow-hidden"
+    >
+      {/* COLLECTION GRID */}
+      <div className="grid grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
           <Link
             key={project.id}
             href={getProjectHref(project)}
-            className="puzzle-item group block perspective-1000"
+            className="puzzle-item group relative block"
           >
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm shadow-2xl">
+            <div className="relative aspect-[4/5] w-full overflow-hidden">
+
+              {/* IMAGE */}
               <img
                 src={project.coverImage}
                 alt={project.title}
-                className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-700"
+                className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
               />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
+
+              {/* HOVER OVERLAY */}
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4">
+
+                <div className="text-white transform translate-y-6 group-hover:translate-y-0 transition-transform duration-500">
+                  <h3 className="text-sm uppercase font-semibold tracking-widest">
+                    {project.title}
+                  </h3>
+                  <p className="text-xs uppercase opacity-80 tracking-widest">
+                    {project.location}
+                  </p>
+                </div>
+
+              </div>
             </div>
           </Link>
         ))}
-      </div>
-
-      {/* ─── DESKTOP GRID: Staggered Puzzle ─── */}
-      <div className="hidden lg:grid grid-cols-12 gap-12 py-20">
-        <div className="lg:col-span-4 flex flex-col gap-16">
-          {columns[0].map((project, i) => (
-            <Link key={project.id} href={getProjectHref(project)} className="puzzle-item group cursor-pointer perspective-1000">
-              <ProjectCard
-                index={i}
-                image={project.coverImage}
-                title={project.title}
-                location={project.location}
-                aspect={project.aspect}
-              />
-            </Link>
-          ))}
-        </div>
-        <div className="lg:col-span-4 lg:mt-80 flex flex-col gap-16">
-          {columns[1].map((project, i) => (
-            <Link key={project.id} href={getProjectHref(project)} className="puzzle-item group cursor-pointer perspective-1000">
-              <ProjectCard
-                index={i}
-                image={project.coverImage}
-                title={project.title}
-                location={project.location}
-                aspect={project.aspect}
-              />
-            </Link>
-          ))}
-        </div>
-        <div className="lg:col-span-4 lg:mt-40 flex flex-col gap-16">
-          {columns[2].map((project, i) => (
-            <Link key={project.id} href={getProjectHref(project)} className="puzzle-item group cursor-pointer perspective-1000">
-              <ProjectCard
-                index={i}
-                image={project.coverImage}
-                title={project.title}
-                location={project.location}
-                aspect={project.aspect}
-              />
-            </Link>
-          ))}
-        </div>
       </div>
     </section>
   );

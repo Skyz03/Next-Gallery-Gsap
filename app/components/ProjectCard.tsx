@@ -16,7 +16,7 @@ export default function ProjectCard({ image, title, location, aspect, index }: P
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.8, delay: (index % 3) * 0.1, ease: "easeOut" }}
-            className="group w-full p-4"
+            className="group w-full"
         >
             <div className={`relative overflow-hidden ${aspect === "portrait" ? "aspect-[3/4]" : "aspect-[16/10]"}`}>
                 <motion.img

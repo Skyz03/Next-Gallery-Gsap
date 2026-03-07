@@ -1,4 +1,4 @@
-"use client"; // We need this for state and useEffect
+"use client";
 
 import { useState, useEffect } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -18,10 +18,6 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
-// Note: Metadata cannot be exported from a 'use client' file.
-// If you need SEO, keep metadata in a separate 'page.tsx' or a 'parent layout'.
-// For now, we focus on the logic.
 
 export default function RootLayout({
   children,
