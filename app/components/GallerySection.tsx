@@ -76,10 +76,10 @@ export default function GallerySection({ projects }: GallerySectionProps) {
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4">
 
                 <div className="text-white transform translate-y-6 group-hover:translate-y-0 transition-transform duration-500">
-                  <h3 className="text-sm font-semibold tracking-wide">
+                  <h3 className="text-sm uppercase font-semibold tracking-widest">
                     {project.title}
                   </h3>
-                  <p className="text-xs opacity-80">
+                  <p className="text-xs uppercase opacity-80 tracking-widest">
                     {project.location}
                   </p>
                 </div>
