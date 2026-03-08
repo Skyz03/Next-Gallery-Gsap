@@ -20,11 +20,10 @@ export default function GallerySection({ projects }: GallerySectionProps) {
       items,
       {
         opacity: 0,
-        scale: 0.5,
-        x: () => (Math.random() - 0.5) * 400,
-        y: () => (Math.random() - 0.5) * 400,
-        rotationZ: () => (Math.random() - 0.5) * 40,
-        rotationX: () => (Math.random() - 0.5) * 50,
+        y: window.innerHeight + 200, // start BELOW the screen
+        x: () => gsap.utils.random(-window.innerWidth * 0.4, window.innerWidth * 0.4), // random horizontal position
+        scale: 0.9,
+        rotationZ: () => gsap.utils.random(-10, 10),
         filter: "blur(10px)",
       },
       {
@@ -33,12 +32,11 @@ export default function GallerySection({ projects }: GallerySectionProps) {
         y: 0,
         scale: 1,
         rotationZ: 0,
-        rotationX: 0,
         filter: "blur(0px)",
-        duration: 2.5,
-        ease: "expo.inOut",
+        duration: 1.8,
+        ease: "expo.out",
         stagger: {
-          amount: 0.8,
+          each: 0.08,
           from: "random",
         },
         scrollTrigger: {
@@ -49,7 +47,6 @@ export default function GallerySection({ projects }: GallerySectionProps) {
       }
     );
   }, { scope: containerRef });
-
   return (
     <section
       ref={containerRef}

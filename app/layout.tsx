@@ -40,8 +40,8 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="en" className="h-screen">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen`}>
         {/* AnimatePresence handles the smooth exit of the Preloader */}
         <AnimatePresence mode="wait">
           {loading && <Preloader key="preloader" onComplete={handleComplete} />}
