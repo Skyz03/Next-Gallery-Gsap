@@ -8,10 +8,10 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://wedsechos.com";
 // Generate static params for all projects at build time
 export async function generateStaticParams() {
   try {
-    const projects = await getProjects();
-    return projects?.map((project) => ({
+    const projects = await getProjects("wedding");
+    return projects.map((project) => ({
       slug: project.slug,
-    })) || [];
+    }));
   } catch {
     return [];
   }

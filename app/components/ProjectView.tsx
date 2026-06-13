@@ -17,7 +17,14 @@ interface ProjectViewProps {
 
 const uiText = "uppercase tracking-[0.4em] text-[9px] md:text-[13px] font-bold transition-opacity cursor-pointer";
 
+const categoryLandingMap: Record<string, string> = {
+    wedding: "/",
+    music: "/music",
+    commercial: "/commercial",
+};
+
 export default function ProjectView({ project, allProjects = [], onClose, isStandalone = false }: ProjectViewProps) {
+    const landingHref = categoryLandingMap[project.category] ?? "/";
     const viewRef = useRef<HTMLDivElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const heroTextRef = useRef<HTMLDivElement>(null);
@@ -133,13 +140,13 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
                 <div className="flex items-center justify-between">
                     <div className="pointer-events-auto">
                         {isStandalone ? (
-                            <Link href="/" className={uiText}>Back</Link>
+                            <Link href={landingHref} className={uiText}>Back</Link>
                         ) : (
                             <button onClick={onClose} className={uiText}>Back</button>
                         )}
                     </div>
                     <div className="pointer-events-auto text-center">
-                        <Link href="/" className="uppercase tracking-[0.4em] text-[10px] md:text-[15px] font-bold leading-none block">
+                        <Link href={landingHref} className="uppercase tracking-[0.4em] text-[10px] md:text-[15px] font-bold leading-none block">
                             Weds Echos
                         </Link>
                     </div>

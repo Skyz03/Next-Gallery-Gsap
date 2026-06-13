@@ -45,9 +45,9 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     const stopAutoScroll = () => {
       if (isAutoScrolling.current) {
-        lenis.stop();
-        lenis.start();
         isAutoScrolling.current = false;
+        // Snap Lenis to the current position — this cancels the active scrollTo animation
+        lenis.scrollTo(window.scrollY, { immediate: true });
       }
     };
 

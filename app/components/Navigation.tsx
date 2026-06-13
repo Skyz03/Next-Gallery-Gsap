@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import SlideMenus from "./SlideMenus";
 
 export default function Navigation() {
@@ -19,13 +20,20 @@ export default function Navigation() {
 
                 {/* TOP LEFT: BRANDING - Styled like the buttons, but scaled for impact */}
                 <div className="absolute top-10 left-10 pointer-events-auto">
-                    <button
-                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                        className={` ${uiTextStyle}`}
-                    >
-                        Weds<br />
-                        Echos
-                    </button>
+                    {pathname === "/" ? (
+                        <button
+                            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                            className={` ${uiTextStyle}`}
+                        >
+                            Weds<br />
+                            Echos
+                        </button>
+                    ) : (
+                        <Link href="/" className={` ${uiTextStyle}`}>
+                            Weds<br />
+                            Echos
+                        </Link>
+                    )}
                 </div>
 
                 {/* TOP RIGHT: MENU TRIGGER */}
@@ -34,7 +42,7 @@ export default function Navigation() {
                         onClick={() => setOpenView("menu")}
                         className={`group flex flex-col items-end gap-1 ${uiTextStyle}`}
                     >
-                        <span className="[writing-mode:vertical-lr] rotate-360">Menu</span>
+                        <span className="[writing-mode:vertical-lr] rotate-180">Menu</span>
                     </button>
                 </div>
 
@@ -44,7 +52,7 @@ export default function Navigation() {
                         onClick={() => setOpenView("contact")}
                         className={`${uiTextStyle} hover:line-through`}
                     >
-                        <span className="[writing-mode:vertical-lr] rotate-360">Contact</span>
+                        <span className="[writing-mode:vertical-lr] rotate-180">Contact</span>
                     </button>
                 </div>
             </div>

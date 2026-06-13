@@ -8,7 +8,36 @@ const categoryPathMap: Record<string, string> = {
   commercial: "/commercial",
 };
 
+async function computeSessionToken(): Promise<string> {
+  const secret = process.env.ADMIN_SESSION_SECRET ?? "";
+  if (!secret) return "";
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, encoder.encode("admin-v1"));
+  return Array.from(new Uint8Array(sig))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 export async function POST(request: Request) {
+  const cookieHeader = request.headers.get("cookie") ?? "";
+  const sessionCookie = cookieHeader
+    .split(";")
+    .map((c) => c.trim())
+    .find((c) => c.startsWith("admin_session="))
+    ?.split("=")[1];
+
+  const expected = await computeSessionToken();
+  if (!expected || sessionCookie !== expected) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
   try {
     const formData = await request.formData();
 

@@ -22,6 +22,7 @@ export default function SlideMenus({ isMenuOpen, isContactOpen, onClose }: Props
             y: isMenuOpen ? "0%" : "-100%",
             duration: isMenuOpen ? 0.8 : 0.6,
             ease,
+            overwrite: true,
         });
     }, [isMenuOpen]);
 
@@ -30,6 +31,7 @@ export default function SlideMenus({ isMenuOpen, isContactOpen, onClose }: Props
             x: isContactOpen ? "0%" : "100%",
             duration: isContactOpen ? 0.8 : 0.6,
             ease,
+            overwrite: true,
         });
     }, [isContactOpen]);
 

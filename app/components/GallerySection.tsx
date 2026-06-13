@@ -44,22 +44,33 @@ export default function GallerySection({ projects }: GallerySectionProps) {
       }
     );
 
+    const cleanups: (() => void)[] = [];
+
     items.forEach((card) => {
       const img = card.querySelector("img");
       const overlay = card.querySelector(".hover-overlay");
       const text = card.querySelector(".hover-text");
 
-      card.addEventListener("mouseenter", () => {
+      const onEnter = () => {
         gsap.to(img, { scale: 1.07, duration: 0.9, ease: "power3.out" });
         gsap.to(overlay, { opacity: 1, duration: 0.5, ease: "power2.out" });
         gsap.to(text, { y: 0, opacity: 1, duration: 0.6, ease: "expo.out" });
-      });
-      card.addEventListener("mouseleave", () => {
+      };
+      const onLeave = () => {
         gsap.to(img, { scale: 1, duration: 0.9, ease: "power3.out" });
         gsap.to(overlay, { opacity: 0, duration: 0.45, ease: "power2.in" });
         gsap.to(text, { y: 20, opacity: 0, duration: 0.35, ease: "power2.in" });
+      };
+
+      card.addEventListener("mouseenter", onEnter);
+      card.addEventListener("mouseleave", onLeave);
+      cleanups.push(() => {
+        card.removeEventListener("mouseenter", onEnter);
+        card.removeEventListener("mouseleave", onLeave);
       });
     });
+
+    return () => cleanups.forEach((fn) => fn());
   }, { scope: containerRef });
 
   return (
