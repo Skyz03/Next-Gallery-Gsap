@@ -15,23 +15,32 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: "Weds Echos",
-    images: [{ url: `${siteUrl}/wed1.jpg`, width: 1200, height: 800, alt: "Weds Echos — Wedding Photography Kathmandu" }],
+    images: [{ url: `${siteUrl}/WS/wed1.jpg`, width: 1200, height: 800, alt: "Weds Echos — Wedding Photography Kathmandu" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "About Weds Echos | Cinematic Wedding Photography, Kathmandu",
     description: "Wedding Photo & Video Studio based in Kathmandu, Nepal — Weds Echos captures weddings and builds model portfolios with cinematic elegance.",
-    images: [`${siteUrl}/wed1.jpg`],
+    images: [`${siteUrl}/WS/wed1.jpg`],
   },
 };
 
+// Wedding + model portfolio + commercial — all available shoots
 const galleryImages = [
-  { src: "/wed3.jpg",  aspect: "aspect-[3/4]" },
-  { src: "/wed8.jpg",  aspect: "aspect-[4/5]" },
-  { src: "/wed14.jpg", aspect: "aspect-[3/4]" },
-  { src: "/wed19.jpg", aspect: "aspect-[4/5]" },
-  { src: "/wed22.jpg", aspect: "aspect-[3/4]" },
-  { src: "/wed26.jpg", aspect: "aspect-[4/5]" },
+  { src: "/WS/wed3.jpg",             aspect: "aspect-[3/4]" },
+  { src: "/WS/wed8.jpg",             aspect: "aspect-[4/5]" },
+  { src: "/Jacket/F1.jpg",           aspect: "aspect-[3/4]" },
+  { src: "/RED/F11.jpg",             aspect: "aspect-[4/5]" },
+  { src: "/WS/wed10.jpg",            aspect: "aspect-[3/4]" },
+  { src: "/BlueL/Edit.jpg",          aspect: "aspect-[4/5]" },
+  { src: "/Sport/DSC_6226.JPG",      aspect: "aspect-[3/4]" },
+  { src: "/WS/wed4.jpg",             aspect: "aspect-[4/5]" },
+  { src: "/RED/F5.jpg",              aspect: "aspect-[3/4]" },
+  { src: "/WS/wed11.jpg",            aspect: "aspect-[4/5]" },
+  { src: "/BlueL/DSC_7515FFF.jpg",   aspect: "aspect-[3/4]" },
+  { src: "/Sport/DSC_6232.JPG",      aspect: "aspect-[4/5]" },
+  { src: "/Jacket/F3.jpg",           aspect: "aspect-[3/4]" },
+  { src: "/WS/wed6.jpg",             aspect: "aspect-[4/5]" },
 ];
 
 export default function AboutPage() {
@@ -41,7 +50,7 @@ export default function AboutPage() {
       {/* ── HERO ─────────────────────────────────────────────── */}
       <section className="relative h-screen w-full overflow-hidden">
         <Image
-          src="/wed1.jpg"
+          src="/WS/wed1.jpg"
           alt="Weds Echos — Wedding Photography Kathmandu"
           fill
           priority
@@ -102,7 +111,7 @@ export default function AboutPage() {
 
         <div className="relative aspect-[3/4] w-full overflow-hidden">
           <Image
-            src="/wed9.jpg"
+            src="/WS/wed9.jpg"
             alt="Weds Echos studio — Kathmandu"
             fill
             className="object-cover"
@@ -141,7 +150,7 @@ export default function AboutPage() {
       <section className="px-6 md:px-20 lg:px-32 py-20 md:py-32 grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24 items-center">
         <div className="relative aspect-[3/4] w-full overflow-hidden order-2 md:order-1">
           <Image
-            src="/wed20.jpg"
+            src="/Jacket/F1.jpg"
             alt="Model portfolio shoot — Weds Echos"
             fill
             className="object-cover"

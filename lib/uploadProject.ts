@@ -27,7 +27,7 @@ function sanitize(name: string) {
  *         01-<filename>
  *         ...
  */
-export async function uploadProject(data: UploadProjectInput): Promise<{ id: string }> {
+export async function uploadProject(data: UploadProjectInput): Promise<{ id: string; coverImage: string }> {
   if (!data.files?.length) {
     throw new Error("At least one image is required.");
   }
@@ -115,5 +115,5 @@ export async function uploadProject(data: UploadProjectInput): Promise<{ id: str
     }
   }
 
-  return { id: String(projectId) };
+  return { id: String(projectId), coverImage: coverUrl };
 }

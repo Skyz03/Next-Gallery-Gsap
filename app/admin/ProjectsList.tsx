@@ -1,16 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
-
-type ProjectRow = {
-  id: string;
-  title: string;
-  client: string;
-  category: string;
-  cover_image: string;
-  created_at: string;
-};
+import { useState } from "react";
+import type { AdminProject } from "./page";
 
 const TABS = ["all", "wedding", "music", "commercial"] as const;
 type Tab = (typeof TABS)[number];
@@ -21,30 +12,21 @@ const categoryBadge: Record<string, string> = {
   commercial: "bg-sky-500/15 text-sky-400 border-sky-500/25",
 };
 
-export default function ProjectsList({ refreshKey }: { refreshKey: number }) {
-  const [projects, setProjects] = useState<ProjectRow[]>([]);
-  const [loading, setLoading] = useState(true);
+interface ProjectsListProps {
+  projects: AdminProject[];
+  onDelete: (id: string) => void;
+}
+
+export default function ProjectsList({ projects, onDelete }: ProjectsListProps) {
   const [tab, setTab] = useState<Tab>("all");
   const [deleting, setDeleting] = useState<string | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
-
-  useEffect(() => {
-    setLoading(true);
-    supabase
-      .from("projects")
-      .select("id, title, client, category, cover_image, created_at")
-      .order("created_at", { ascending: false })
-      .then(({ data }) => {
-        setProjects((data as ProjectRow[]) ?? []);
-        setLoading(false);
-      });
-  }, [refreshKey]);
 
   async function handleDelete(id: string) {
     setDeleting(id);
     const res = await fetch(`/api/admin/projects/${id}`, { method: "DELETE" });
     if (res.ok) {
-      setProjects((prev) => prev.filter((p) => p.id !== id));
+      onDelete(id);
     }
     setDeleting(null);
     setConfirmId(null);
@@ -83,20 +65,14 @@ export default function ProjectsList({ refreshKey }: { refreshKey: number }) {
       {/* List */}
       <div className="flex-1 overflow-y-auto space-y-2 pr-1 min-h-0">
 
-        {loading && (
-          <div className="flex items-center justify-center py-16">
-            <div className="w-5 h-5 rounded-full border-2 border-white/15 border-t-white/60 animate-spin" />
-          </div>
-        )}
-
-        {!loading && filtered.length === 0 && (
+        {filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <div className="text-white/15 text-4xl">○</div>
             <p className="text-sm text-white/30">No projects yet</p>
           </div>
         )}
 
-        {!loading && filtered.map((p) => (
+        {filtered.map((p) => (
           <div
             key={p.id}
             className="group flex items-center gap-3 rounded-xl p-3 border border-white/8 bg-white/[0.03] hover:bg-white/[0.06] transition-colors"

@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { uploadProject } from "@/lib/uploadProject";
+
+const categoryPathMap: Record<string, string> = {
+  wedding: "/",
+  music: "/music",
+  commercial: "/commercial",
+};
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +20,7 @@ export async function POST(request: Request) {
     const aspect = formData.get("aspect");
 
     const validCategories = ["wedding", "music", "commercial"] as const;
-    type ValidCategory = typeof validCategories[number];
+    type ValidCategory = (typeof validCategories)[number];
     const isValidCategory = (v: unknown): v is ValidCategory =>
       validCategories.includes(v as ValidCategory);
     const categoryStr = isValidCategory(category) ? category : "wedding";
@@ -24,24 +31,15 @@ export async function POST(request: Request) {
     const aspectStr = aspect === "portrait" || aspect === "landscape" ? aspect : "portrait";
 
     if (!titleStr) {
-      return NextResponse.json(
-        { error: "Title is required." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Title is required." }, { status: 400 });
     }
     if (!clientStr) {
-      return NextResponse.json(
-        { error: "Client is required." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Client is required." }, { status: 400 });
     }
 
     const files = formData.getAll("files").filter((f): f is File => f instanceof File);
     if (files.length === 0) {
-      return NextResponse.json(
-        { error: "At least one image is required." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "At least one image is required." }, { status: 400 });
     }
 
     const result = await uploadProject({
@@ -54,7 +52,22 @@ export async function POST(request: Request) {
       files,
     });
 
-    return NextResponse.json({ success: true, id: result.id });
+    // Bust the public gallery cache immediately so the new project appears right away
+    const path = categoryPathMap[categoryStr] ?? "/";
+    revalidatePath(path);
+
+    return NextResponse.json({
+      success: true,
+      project: {
+        id: result.id,
+        title: titleStr,
+        client: clientStr,
+        location: locationStr,
+        category: categoryStr,
+        cover_image: result.coverImage,
+        created_at: new Date().toISOString(),
+      },
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Upload failed.";
     return NextResponse.json({ error: message }, { status: 500 });

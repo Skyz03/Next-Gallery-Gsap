@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import type { AdminProject } from "./page";
 
 type FilePreview = { file: File; preview: string };
 
@@ -12,7 +13,7 @@ const inputClass =
 
 const labelClass = "block text-xs font-medium text-white/60 mb-2";
 
-export default function ProjectUploadForm({ onSuccess }: { onSuccess: () => void }) {
+export default function ProjectUploadForm({ onSuccess }: { onSuccess: (project: AdminProject) => void }) {
   const [category, setCategory] = useState<Category>("wedding");
   const [files, setFiles] = useState<FilePreview[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -122,7 +123,7 @@ export default function ProjectUploadForm({ onSuccess }: { onSuccess: () => void
       form.reset();
       files.forEach((fp) => URL.revokeObjectURL(fp.preview));
       setFiles([]);
-      onSuccess();
+      onSuccess(data.project);
       setTimeout(() => setStatus("idle"), 3000);
     } catch {
       setStatus("error");
