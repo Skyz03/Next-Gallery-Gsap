@@ -89,7 +89,6 @@ export default function GallerySection({ projects }: GallerySectionProps) {
                   src={project.coverImage}
                   alt={project.title}
                   fill
-                  priority={index < 4}
                   sizes="50vw"
                   className="object-cover object-center transition-transform duration-700 ease-out group-active:scale-[1.03]"
                 />
