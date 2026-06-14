@@ -71,7 +71,7 @@ export default function MusicGallery({ projects }: MusicGalleryProps) {
       className="overflow-hidden perspective-2000"
     >
       <div className="grid grid-cols-2 md:grid-cols-3">
-        {projects.map((project) => (
+        {projects.map((project, index) => (
           <Link
             key={project.id}
             href={getProjectHref(project)}
@@ -84,6 +84,7 @@ export default function MusicGallery({ projects }: MusicGalleryProps) {
               alt={project.title}
               fill
               sizes="(max-width: 768px) 50vw, 33vw"
+              priority={index === 0}
               className="object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-105 transition-[transform,filter] duration-[1500ms] ease-out"
             />
 

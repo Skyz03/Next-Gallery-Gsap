@@ -3,6 +3,8 @@ import ProjectView from "@/app/components/ProjectView";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://wedsechos.com";
 
 // Generate static params for all projects at build time
@@ -26,7 +28,7 @@ export async function generateMetadata({
   const { slug } = await params;
 
   try {
-    const projects = await getProjects();
+    const projects = await getProjects("wedding");
     const project = projects?.find((p) => p.slug === slug);
 
     if (!project) {
@@ -70,7 +72,7 @@ export default async function ProjectPage({
   const { slug } = await params;
 
   try {
-    const projects = await getProjects();
+    const projects = await getProjects("wedding");
     const project = projects?.find((p) => p.slug === slug);
 
     if (!project) {

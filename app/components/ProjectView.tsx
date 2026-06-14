@@ -179,7 +179,7 @@ export default function ProjectView({ project, allProjects = [], onClose, isStan
                 <section className="relative min-w-[100vw] h-screen flex-shrink-0 flex flex-col md:flex-row items-stretch snap-start">
                     <div className="absolute inset-0 md:relative md:w-1/2 md:order-2 h-full bg-neutral-900 overflow-hidden">
                         <div className="parallax-img gsap-reveal relative w-full h-full scale-105">
-                            <Image src={project.coverImage} alt={project.title} fill priority className="object-cover" />
+                            <Image src={project.coverImage} alt={project.title} fill priority sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
                         </div>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent md:hidden" />
                     </div>

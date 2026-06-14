@@ -34,6 +34,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     const startAutoScroll = () => {
       if (isAutoScrolling.current) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       isAutoScrolling.current = true;
       const target = window.scrollY + 3000;
       lenis.scrollTo(target, {

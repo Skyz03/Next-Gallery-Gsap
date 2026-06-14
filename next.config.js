@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    minimumCacheTTL: 604800,
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
